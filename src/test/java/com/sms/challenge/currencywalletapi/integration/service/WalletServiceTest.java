@@ -1,7 +1,5 @@
 package com.sms.challenge.currencywalletapi.integration.service;
 
-import com.sms.challenge.currencywalletapi.domain.CurrencyAmountDTO;
-import com.sms.challenge.currencywalletapi.domain.WalletDTO;
 import com.sms.challenge.currencywalletapi.exception.NotFoundException;
 import com.sms.challenge.currencywalletapi.exception.ValidationException;
 import com.sms.challenge.currencywalletapi.persistence.entity.CurrencyAmount;
@@ -26,6 +24,9 @@ import static org.junit.jupiter.api.Assertions.*;
 @SpringBootTest
 class WalletServiceTest {
 
+    /**
+     * The Repository.
+     */
     @Autowired
     WalletRepository repository;
 
@@ -51,7 +52,7 @@ class WalletServiceTest {
     @Test
     void testFind() {
         Long id = repository.findAll().stream().findFirst().get().getId();
-        WalletDTO wallet = service.find(id);
+        Wallet wallet = service.find(id);
         assertNotNull(wallet);
         assertEquals(wallet.getId(), id);
     }
@@ -73,10 +74,10 @@ class WalletServiceTest {
      */
     @Test
     void testSave() {
-        Set<CurrencyAmountDTO> currencyAmounts = new HashSet<>();
-        currencyAmounts.add(new CurrencyAmountDTO("BTC", new BigDecimal(98.69)));
-        currencyAmounts.add(new CurrencyAmountDTO("BTCA", new BigDecimal(98.79)));
-        WalletDTO wallet = new WalletDTO("MyWallet", currencyAmounts);
+        Set<CurrencyAmount> currencyAmounts = new HashSet<>();
+        currencyAmounts.add(new CurrencyAmount("BTC", new BigDecimal(98.69)));
+        currencyAmounts.add(new CurrencyAmount("BTCA", new BigDecimal(98.79)));
+        Wallet wallet = new Wallet("MyWallet", currencyAmounts);
         wallet = service.create(wallet);
         assertNotNull(wallet.getId());
         assertEquals(currencyAmounts.size(), wallet.getCurrencyAmounts().size());
@@ -87,30 +88,30 @@ class WalletServiceTest {
      */
     @Test
     void testValidateSave() {
-        Set<CurrencyAmountDTO> currencyAmounts1 = new HashSet<>();
-        currencyAmounts1.add(new CurrencyAmountDTO("BTC", new BigDecimal(98.69)));
-        currencyAmounts1.add(new CurrencyAmountDTO("BTC", new BigDecimal(98.79)));
-        WalletDTO wallet = new WalletDTO("MyWallet", currencyAmounts1);
+        Set<CurrencyAmount> currencyAmounts1 = new HashSet<>();
+        currencyAmounts1.add(new CurrencyAmount("BTC", new BigDecimal(98.69)));
+        currencyAmounts1.add(new CurrencyAmount("BTC", new BigDecimal(98.79)));
+        Wallet wallet = new Wallet("MyWallet", currencyAmounts1);
         Exception exception1 = assertThrows(DataIntegrityViolationException.class, () -> service.create(wallet));
         assertTrue(exception1.getCause().getCause().getMessage().contains("Unique index or primary key violation"));
 
         Exception exception2 = assertThrows(ValidationException.class, () -> service.create(null));
         assertTrue(exception2.getMessage().contains("Wallet is required"));
 
-        Exception exception3 = assertThrows(ValidationException.class, () -> service.create(new WalletDTO(1L, "MyWallet", null)));
+        Exception exception3 = assertThrows(ValidationException.class, () -> service.create(new Wallet(1L, "MyWallet", null)));
         assertTrue(exception3.getMessage().contains("Id is not allowed"));
 
-        Exception exception4 = assertThrows(ValidationException.class, () -> service.create(new WalletDTO(null, null)));
+        Exception exception4 = assertThrows(ValidationException.class, () -> service.create(new Wallet(null, null)));
         assertTrue(exception4.getMessage().contains("Name is required"));
 
-        Set<CurrencyAmountDTO> currencyAmounts2 = new HashSet<>();
-        currencyAmounts2.add(new CurrencyAmountDTO("BTC", null));
-        Exception exception5 = assertThrows(ValidationException.class, () -> service.create(new WalletDTO("MyWallet", currencyAmounts2)));
+        Set<CurrencyAmount> currencyAmounts2 = new HashSet<>();
+        currencyAmounts2.add(new CurrencyAmount("BTC", null));
+        Exception exception5 = assertThrows(ValidationException.class, () -> service.create(new Wallet("MyWallet", currencyAmounts2)));
         assertTrue(exception5.getMessage().contains("Amount is required in currency amounts"));
 
-        Set<CurrencyAmountDTO> currencyAmounts3 = new HashSet<>();
-        currencyAmounts3.add(new CurrencyAmountDTO(null, new BigDecimal(98.79)));
-        Exception exception6 = assertThrows(ValidationException.class, () -> service.create(new WalletDTO("MyWallet", currencyAmounts3)));
+        Set<CurrencyAmount> currencyAmounts3 = new HashSet<>();
+        currencyAmounts3.add(new CurrencyAmount(null, new BigDecimal(98.79)));
+        Exception exception6 = assertThrows(ValidationException.class, () -> service.create(new Wallet("MyWallet", currencyAmounts3)));
         assertTrue(exception6.getMessage().contains("Currency is required in currency amounts"));
     }
 
@@ -119,9 +120,9 @@ class WalletServiceTest {
      */
     @Test
     void testUpdate() {
-        Long id = repository.findAll().stream().findFirst().get().getId();
+        Wallet wallet = repository.findAll().stream().findFirst().get();
         String newName = "NewWallet";
-        WalletDTO wallet = new WalletDTO(id, newName, null);
+        wallet.setName(newName);
         wallet = service.update(wallet);
         assertEquals(newName, wallet.getName());
     }
@@ -131,25 +132,19 @@ class WalletServiceTest {
      */
     @Test
     void testValidateUpdate() {
-        Long id = repository.findAll().stream().findFirst().get().getId();
-
         Exception exception1 = assertThrows(ValidationException.class, () -> service.update(null));
         assertTrue(exception1.getMessage().contains("Wallet is required"));
 
-        Exception exception2 = assertThrows(ValidationException.class, () -> service.update(new WalletDTO("MyWallet", null)));
+        Exception exception2 = assertThrows(ValidationException.class, () -> service.update(new Wallet("MyWallet", null)));
         assertTrue(exception2.getMessage().contains("Id is required"));
 
-        Exception exception3 = assertThrows(NotFoundException.class, () -> service.update(new WalletDTO(2312323L, "MyWallet", null)));
+        Exception exception3 = assertThrows(NotFoundException.class, () -> service.update(new Wallet(2312323L, "MyWallet", null)));
         assertTrue(exception3.getMessage().contains("Wallet not found"));
 
-        Exception exception4 = assertThrows(ValidationException.class, () -> service.update(new WalletDTO(id, null, null)));
+        Wallet wallet = repository.findAll().stream().findFirst().get();
+        wallet.setName("");
+        Exception exception4 = assertThrows(ValidationException.class, () -> service.update(wallet));
         assertTrue(exception4.getMessage().contains("Name is required"));
-
-        Set<CurrencyAmountDTO> currencyAmounts1 = new HashSet<>();
-        currencyAmounts1.add(new CurrencyAmountDTO("BTC1", new BigDecimal(98.69)));
-        currencyAmounts1.add(new CurrencyAmountDTO("BTC2", new BigDecimal(98.79)));
-        Exception exception5 = assertThrows(ValidationException.class, () -> service.update(new WalletDTO(id, "MyWallet", currencyAmounts1)));
-        assertTrue(exception5.getMessage().contains("Currency amounts are not allowed"));
     }
 
     /**

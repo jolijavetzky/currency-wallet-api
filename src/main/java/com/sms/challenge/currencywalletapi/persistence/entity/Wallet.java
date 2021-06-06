@@ -72,6 +72,19 @@ public class Wallet {
     }
 
     /**
+     * Instantiates a new Wallet.
+     *
+     * @param id              the id
+     * @param name            the name
+     * @param currencyAmounts the currency amounts
+     */
+    public Wallet(Long id, String name, Set<CurrencyAmount> currencyAmounts) {
+        this.id = id;
+        this.name = name;
+        this.currencyAmounts = currencyAmounts;
+    }
+
+    /**
      * Builder wallet . builder.
      *
      * @return the wallet . builder
