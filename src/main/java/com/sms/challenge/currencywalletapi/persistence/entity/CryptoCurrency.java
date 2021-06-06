@@ -22,4 +22,15 @@ public class CryptoCurrency {
     public CryptoCurrency(String currency) {
         this.currency = currency;
     }
+
+    /**
+     * Instantiates a new Crypto currency.
+     *
+     * @param currency the currency
+     * @param prices   the prices
+     */
+    public CryptoCurrency(String currency, List<CryptoCurrencyPrice> prices) {
+        this.currency = currency;
+        this.prices = prices;
+    }
 }

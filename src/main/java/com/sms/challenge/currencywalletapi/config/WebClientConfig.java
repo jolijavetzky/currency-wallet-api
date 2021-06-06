@@ -22,12 +22,12 @@ public class WebClientConfig {
     private static final int TIMEOUT = 1000;
 
     /**
-     * Custom web client builder web client . builder.
+     * Custom web client web client.
      *
-     * @return the web client . builder
+     * @return the web client
      */
     @Bean
-    public WebClient customWebClientBuilder() {
+    public WebClient customWebClient() {
         final var tcpClient = TcpClient
                 .create()
                 .option(ChannelOption.CONNECT_TIMEOUT_MILLIS, TIMEOUT)
@@ -37,7 +37,6 @@ public class WebClientConfig {
                 });
 
         return WebClient.builder()
-//                .baseUrl(BASE_URL)
                 .clientConnector(new ReactorClientHttpConnector(HttpClient.from(tcpClient)))
                 .build();
     }

@@ -3,7 +3,6 @@ package com.sms.challenge.currencywalletapi.domain;
 import lombok.Data;
 
 import java.util.List;
-import java.util.Set;
 
 /**
  * The type Crypto currency dto.

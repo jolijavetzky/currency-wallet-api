@@ -10,6 +10,8 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
@@ -31,9 +33,9 @@ public class CurrencyServiceTest {
     @Test
     void testSaveAll() {
         int previousSize = service.findAll().size();
-        List<Currency> currencies = new ArrayList<>();
-        currencies.add(new Currency("ALIEN", true));
-        currencies.add(new Currency("ARS", false));
+        Currency c1 = new Currency("ALIEN", true);
+        Currency c2 = new Currency("ARS", false);
+        List<Currency> currencies = Stream.of(c1, c2).collect(Collectors.toList());
         service.saveAll(currencies);
         assertEquals(previousSize + currencies.size(), service.findAll().size());
     }

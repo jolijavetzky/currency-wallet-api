@@ -13,8 +13,9 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.dao.DataIntegrityViolationException;
 
 import java.math.BigDecimal;
-import java.util.HashSet;
 import java.util.Set;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -41,9 +42,8 @@ class WalletServiceTest {
      */
     @BeforeEach
     void setUp() {
-        Set<CurrencyAmount> currencyAmounts = new HashSet<>();
-        currencyAmounts.add(new CurrencyAmount("BTC", new BigDecimal(98.69)));
-        repository.save(new Wallet("MyWallet", currencyAmounts));
+        CurrencyAmount currencyAmount = new CurrencyAmount("BTC", new BigDecimal(98.69));
+        repository.save(new Wallet("MyWallet", Stream.of(currencyAmount).collect(Collectors.toSet())));
     }
 
     /**
@@ -74,9 +74,9 @@ class WalletServiceTest {
      */
     @Test
     void testSave() {
-        Set<CurrencyAmount> currencyAmounts = new HashSet<>();
-        currencyAmounts.add(new CurrencyAmount("BTC", new BigDecimal(98.69)));
-        currencyAmounts.add(new CurrencyAmount("BTCA", new BigDecimal(98.79)));
+        CurrencyAmount ca1 = new CurrencyAmount("BTC", new BigDecimal(98.69));
+        CurrencyAmount ca2 = new CurrencyAmount("BTCA", new BigDecimal(98.79));
+        Set<CurrencyAmount> currencyAmounts = Stream.of(ca1, ca2).collect(Collectors.toSet());
         Wallet wallet = new Wallet("MyWallet", currencyAmounts);
         wallet = service.create(wallet);
         assertNotNull(wallet.getId());
@@ -88,9 +88,9 @@ class WalletServiceTest {
      */
     @Test
     void testValidateSave() {
-        Set<CurrencyAmount> currencyAmounts1 = new HashSet<>();
-        currencyAmounts1.add(new CurrencyAmount("BTC", new BigDecimal(98.69)));
-        currencyAmounts1.add(new CurrencyAmount("BTC", new BigDecimal(98.79)));
+        CurrencyAmount ca1 = new CurrencyAmount("BTC", new BigDecimal(98.69));
+        CurrencyAmount ca2 = new CurrencyAmount("BTC", new BigDecimal(98.79));
+        Set<CurrencyAmount> currencyAmounts1 = Stream.of(ca1, ca2).collect(Collectors.toSet());
         Wallet wallet = new Wallet("MyWallet", currencyAmounts1);
         Exception exception1 = assertThrows(DataIntegrityViolationException.class, () -> service.create(wallet));
         assertTrue(exception1.getCause().getCause().getMessage().contains("Unique index or primary key violation"));
@@ -104,13 +104,15 @@ class WalletServiceTest {
         Exception exception4 = assertThrows(ValidationException.class, () -> service.create(new Wallet(null, null)));
         assertTrue(exception4.getMessage().contains("Name is required"));
 
-        Set<CurrencyAmount> currencyAmounts2 = new HashSet<>();
-        currencyAmounts2.add(new CurrencyAmount("BTC", null));
+        CurrencyAmount ca3 = new CurrencyAmount("BTC", null);
+        Set<CurrencyAmount> currencyAmounts2 = Stream.of(ca3).collect(Collectors.toSet());
+
         Exception exception5 = assertThrows(ValidationException.class, () -> service.create(new Wallet("MyWallet", currencyAmounts2)));
         assertTrue(exception5.getMessage().contains("Amount is required in currency amounts"));
 
-        Set<CurrencyAmount> currencyAmounts3 = new HashSet<>();
-        currencyAmounts3.add(new CurrencyAmount(null, new BigDecimal(98.79)));
+        CurrencyAmount ca4 = new CurrencyAmount(null, new BigDecimal(98.79));
+        Set<CurrencyAmount> currencyAmounts3 = Stream.of(ca4).collect(Collectors.toSet());
+
         Exception exception6 = assertThrows(ValidationException.class, () -> service.create(new Wallet("MyWallet", currencyAmounts3)));
         assertTrue(exception6.getMessage().contains("Currency is required in currency amounts"));
     }
