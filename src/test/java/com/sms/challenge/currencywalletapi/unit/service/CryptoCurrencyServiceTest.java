@@ -68,6 +68,7 @@ public class CryptoCurrencyServiceTest {
         prices.put(NOT_CRYPTO_CURRENCY_SYMBOL_2, NOT_CRYPTO_CURRENCY_PRICE_2);
         currencies.put(CRYPTO_CURRENCY_SYMBOL, prices);
         when(this.fetcherService.fetch(Mockito.anyListOf(String.class), Mockito.anyListOf(String.class))).thenReturn(currencies);
+        when(this.fetcherService.fetch(Mockito.anyString(), Mockito.anyString())).thenReturn(currencies);
     }
 
     /**
@@ -95,7 +96,7 @@ public class CryptoCurrencyServiceTest {
      */
     @Test
     void testValidateConvert() {
-        when(this.fetcherService.fetch(Mockito.anyListOf(String.class), Mockito.anyListOf(String.class))).thenReturn(new HashMap<>());
+        when(this.fetcherService.fetch(Mockito.anyString(), Mockito.anyString())).thenReturn(new HashMap<>());
         Exception exception = assertThrows(NotFoundException.class, () -> this.service.convert("BTC", "USD"));
         assertTrue(exception.getMessage().contains("Currency symbol not found"));
     }

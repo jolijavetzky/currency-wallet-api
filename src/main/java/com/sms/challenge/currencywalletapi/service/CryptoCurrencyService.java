@@ -54,7 +54,7 @@ public class CryptoCurrencyService {
      * @return the double
      */
     public Double convert(String currencyFrom, String currencyTo) {
-        Map<String, Map<String, Double>> data = this.fetcherService.fetch(Stream.of(currencyFrom).collect(Collectors.toList()), Stream.of(currencyTo).collect(Collectors.toList()));
+        Map<String, Map<String, Double>> data = this.fetcherService.fetch(currencyFrom, currencyTo);
         if (data.isEmpty()) {
             throw new NotFoundException("Currency symbol not found");
         }
