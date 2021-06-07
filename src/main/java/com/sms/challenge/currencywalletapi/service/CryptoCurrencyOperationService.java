@@ -8,12 +8,14 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
+import javax.transaction.Transactional;
 import java.util.Optional;
 
 /**
  * The type Crypto currency operation service.
  */
 @Service
+@Transactional
 public class CryptoCurrencyOperationService {
 
     @Autowired
@@ -28,14 +30,18 @@ public class CryptoCurrencyOperationService {
     /**
      * Buy.
      *
-     * @param wallet       the wallet
+     * @param walletId     the wallet id
      * @param currencyFrom the currency from
      * @param currencyTo   the currency to
      * @param amount       the amount
      */
-    public void buy(Wallet wallet, String currencyFrom, String currencyTo, Double amount) {
-        this.validateBuyInputs(wallet, currencyFrom, currencyTo, amount);
+    public void buy(Long walletId, String currencyFrom, String currencyTo, Double amount) {
+        this.validateBuyInputs(walletId, currencyFrom, currencyTo, amount);
+        Wallet wallet = this.walletService.findForWrite(walletId);
         // Data validations
+        if (wallet == null) {
+            throw new NotFoundException("Wallet not found");
+        }
         if (this.currencyService.findBySymbol(currencyFrom) == null) {
             throw new NotFoundException("Currency from not found");
         }
@@ -58,15 +64,23 @@ public class CryptoCurrencyOperationService {
     /**
      * Transfer.
      *
-     * @param walletFrom   the wallet from
-     * @param walletTo     the wallet to
+     * @param walletIdFrom the wallet id from
+     * @param walletIdTo   the wallet id to
      * @param currencyFrom the currency from
      * @param currencyTo   the currency to
      * @param amount       the amount
      */
-    public void transfer(Wallet walletFrom, Wallet walletTo, String currencyFrom, String currencyTo, Double amount) {
-        this.validateTransferInputs(walletFrom, walletTo, currencyFrom, currencyTo, amount);
+    public void transfer(Long walletIdFrom, Long walletIdTo, String currencyFrom, String currencyTo, Double amount) {
+        this.validateTransferInputs(walletIdFrom, walletIdTo, currencyFrom, currencyTo, amount);
+        Wallet walletFrom = this.walletService.findForWrite(walletIdFrom);
+        Wallet walletTo = this.walletService.findForWrite(walletIdTo);
         // Data validations
+        if (walletFrom == null) {
+            throw new NotFoundException("Wallet from not found");
+        }
+        if (walletTo == null) {
+            throw new NotFoundException("Wallet to not found");
+        }
         if (this.currencyService.findBySymbol(currencyFrom) == null) {
             throw new NotFoundException("Currency from not found");
         }
@@ -98,9 +112,9 @@ public class CryptoCurrencyOperationService {
         }
     }
 
-    private void validateBuyInputs(Wallet wallet, String currencyFrom, String currencyTo, Double amount) {
-        if (wallet == null) {
-            throw new ValidationException("Wallet is required");
+    private void validateBuyInputs(Long walletId, String currencyFrom, String currencyTo, Double amount) {
+        if (walletId == null) {
+            throw new ValidationException("Wallet id is required");
         }
         if (StringUtils.isEmpty(currencyFrom)) {
             throw new ValidationException("Currency from is required");
@@ -116,12 +130,12 @@ public class CryptoCurrencyOperationService {
         }
     }
 
-    private void validateTransferInputs(Wallet walletFrom, Wallet walletTo, String currencyFrom, String currencyTo, Double amount) {
-        if (walletFrom == null) {
-            throw new ValidationException("Wallet from is required");
+    private void validateTransferInputs(Long walletIdFrom, Long walletIdTo, String currencyFrom, String currencyTo, Double amount) {
+        if (walletIdFrom == null) {
+            throw new ValidationException("Wallet id from is required");
         }
-        if (walletTo == null) {
-            throw new ValidationException("Wallet to is required");
+        if (walletIdTo == null) {
+            throw new ValidationException("Wallet id to is required");
         }
         if (StringUtils.isEmpty(currencyFrom)) {
             throw new ValidationException("Currency from is required");

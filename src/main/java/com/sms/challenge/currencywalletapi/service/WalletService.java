@@ -37,6 +37,44 @@ public class WalletService {
     }
 
     /**
+     * Find for write wallet.
+     *
+     * @param id the id
+     * @return the wallet
+     */
+    public Wallet findForWrite(Long id) {
+        // Input validations
+        if (id == null) {
+            throw new ValidationException("Id is required");
+        }
+        // Find wallet
+        Wallet wallet = this.walletRepository.findByIdForWrite(id);
+        if (wallet == null) {
+            throw new NotFoundException("Wallet not found");
+        }
+        return wallet;
+    }
+
+    /**
+     * Find for read wallet.
+     *
+     * @param id the id
+     * @return the wallet
+     */
+    public Wallet findForRead(Long id) {
+        // Input validations
+        if (id == null) {
+            throw new ValidationException("Id is required");
+        }
+        // Find wallet
+        Wallet wallet = this.walletRepository.findByIdForRead(id);
+        if (wallet == null) {
+            throw new NotFoundException("Wallet not found");
+        }
+        return wallet;
+    }
+
+    /**
      * Create wallet.
      *
      * @param wallet the wallet

@@ -69,6 +69,52 @@ class WalletServiceTest {
     }
 
     /**
+     * Test find for read.
+     */
+    @Test
+    void testFindForRead() {
+        Long id = repository.findAll().stream().findFirst().get().getId();
+        Wallet wallet = service.findForRead(id);
+        assertNotNull(wallet);
+        assertEquals(wallet.getId(), id);
+    }
+
+    /**
+     * Test validate find for read.
+     */
+    @Test
+    void testValidateFindForRead() {
+        Exception exception1 = assertThrows(ValidationException.class, () -> service.findForRead(null));
+        assertTrue(exception1.getMessage().contains("Id is required"));
+
+        Exception exception2 = assertThrows(NotFoundException.class, () -> service.findForRead(2121212L));
+        assertTrue(exception2.getMessage().contains("Wallet not found"));
+    }
+
+    /**
+     * Test find for write.
+     */
+    @Test
+    void testFindForWrite() {
+        Long id = repository.findAll().stream().findFirst().get().getId();
+        Wallet wallet = service.findForWrite(id);
+        assertNotNull(wallet);
+        assertEquals(wallet.getId(), id);
+    }
+
+    /**
+     * Test validate find for write.
+     */
+    @Test
+    void testValidateFindForWrite() {
+        Exception exception1 = assertThrows(ValidationException.class, () -> service.findForWrite(null));
+        assertTrue(exception1.getMessage().contains("Id is required"));
+
+        Exception exception2 = assertThrows(NotFoundException.class, () -> service.findForWrite(2121212L));
+        assertTrue(exception2.getMessage().contains("Wallet not found"));
+    }
+
+    /**
      * Test save.
      */
     @Test
