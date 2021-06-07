@@ -13,4 +13,5 @@ import org.springframework.context.annotation.Configuration;
 public class AppConfig {
 
     private String cryptoCompareApiBaseUrl;
+    private Double priceTolerance;
 }

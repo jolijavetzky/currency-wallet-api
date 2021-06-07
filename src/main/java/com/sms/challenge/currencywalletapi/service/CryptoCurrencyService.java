@@ -5,6 +5,7 @@ import com.sms.challenge.currencywalletapi.persistence.entity.CryptoCurrency;
 import com.sms.challenge.currencywalletapi.persistence.entity.CryptoCurrencyPrice;
 import com.sms.challenge.currencywalletapi.persistence.entity.Currency;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -30,6 +31,7 @@ public class CryptoCurrencyService {
      *
      * @return the list
      */
+    @Cacheable("currencies")
     public List<CryptoCurrency> findAll() {
         List<String> currenciesFrom = this.currencyService.findAllByCrypto().stream().map(Currency::getSymbol).collect(Collectors.toList());
         List<String> currenciesTo = this.currencyService.findAllByNotCrypto().stream().map(Currency::getSymbol).collect(Collectors.toList());
@@ -53,6 +55,7 @@ public class CryptoCurrencyService {
      * @param currencyTo   the currency to
      * @return the double
      */
+    @Cacheable("currency")
     public Double convert(String currencyFrom, String currencyTo) {
         Map<String, Map<String, Double>> data = this.fetcherService.fetch(currencyFrom, currencyTo);
         if (data.isEmpty()) {

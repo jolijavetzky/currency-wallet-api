@@ -26,7 +26,7 @@ public class CacheConfig {
         mapConfigCurrencies.setTimeToLiveSeconds(30);
         config.addMapConfig(mapConfigCurrencies);
         MapConfig mapConfigCurrency = new MapConfig("currency");
-        mapConfigCurrency.setTimeToLiveSeconds(30);
+        mapConfigCurrency.setTimeToLiveSeconds(10);
         config.addMapConfig(mapConfigCurrency);
         return new HazelcastCacheManager(Hazelcast.newHazelcastInstance(config));
     }

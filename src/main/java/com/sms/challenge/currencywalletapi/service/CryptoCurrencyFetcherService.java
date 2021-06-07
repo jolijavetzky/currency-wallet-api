@@ -5,7 +5,6 @@ import com.sms.challenge.currencywalletapi.exception.ExternalServiceException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
 import reactor.core.publisher.Mono;
@@ -36,7 +35,6 @@ public class CryptoCurrencyFetcherService {
      * @param currenciesTo   the currencies to
      * @return the map
      */
-    @Cacheable("currencies")
     public Map<String, Map<String, Double>> fetch(List<String> currenciesFrom, List<String> currenciesTo) {
         String from = currenciesFrom.stream().collect(Collectors.joining(","));
         String to = currenciesTo.stream().collect(Collectors.joining(","));
@@ -57,7 +55,13 @@ public class CryptoCurrencyFetcherService {
         return data;
     }
 
-    @Cacheable("currency")
+    /**
+     * Fetch map.
+     *
+     * @param currencyFrom the currency from
+     * @param currencyTo   the currency to
+     * @return the map
+     */
     public Map<String, Map<String, Double>> fetch(String currencyFrom, String currencyTo) {
         Map<String, Map<String, Double>> data = webClient.get()
                 .uri(String.join("", appConfig.getCryptoCompareApiBaseUrl(), "/price?fsym=", currencyFrom, "&tsyms=", currencyTo))

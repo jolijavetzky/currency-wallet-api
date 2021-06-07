@@ -1,5 +1,6 @@
 package com.sms.challenge.currencywalletapi.service;
 
+import com.sms.challenge.currencywalletapi.config.AppConfig;
 import com.sms.challenge.currencywalletapi.exception.NotFoundException;
 import com.sms.challenge.currencywalletapi.exception.ValidationException;
 import com.sms.challenge.currencywalletapi.persistence.entity.CurrencyAmount;
@@ -27,6 +28,9 @@ public class CryptoCurrencyOperationService {
     @Autowired
     private WalletService walletService;
 
+    @Autowired
+    private AppConfig appConfig;
+
     /**
      * Buy.
      *
@@ -36,6 +40,33 @@ public class CryptoCurrencyOperationService {
      * @param amount       the amount
      */
     public void buy(Long walletId, String currencyFrom, String currencyTo, Double amount) {
+        this.buy(walletId, currencyFrom, currencyTo, amount, null, null);
+    }
+
+    /**
+     * Buy.
+     *
+     * @param walletId     the wallet id
+     * @param currencyFrom the currency from
+     * @param currencyTo   the currency to
+     * @param amount       the amount
+     * @param price        the price
+     */
+    public void buy(Long walletId, String currencyFrom, String currencyTo, Double amount, Double price) {
+        this.buy(walletId, currencyFrom, currencyTo, amount, price, Boolean.FALSE);
+    }
+
+    /**
+     * Buy.
+     *
+     * @param walletId      the wallet id
+     * @param currencyFrom  the currency from
+     * @param currencyTo    the currency to
+     * @param amount        the amount
+     * @param price         the price
+     * @param validatePrice the validate price
+     */
+    public void buy(Long walletId, String currencyFrom, String currencyTo, Double amount, Double price, Boolean validatePrice) {
         this.validateBuyInputs(walletId, currencyFrom, currencyTo, amount);
         Wallet wallet = this.walletService.findForWrite(walletId);
         // Data validations
@@ -53,11 +84,13 @@ public class CryptoCurrencyOperationService {
             throw new ValidationException("The amount exceeds the available");
         }
         // Conversion
-        Double price = cryptoCurrencyService.convert(currencyFrom, currencyTo);
-        // Update in wallet
+        Double value = this.getFinalPrice(currencyFrom, currencyTo, price, validatePrice);
+        // Substracts the amount in the from currency
         currencyAmountFrom.setAmount(currencyAmountFrom.getAmount() - amount);
+        // Update the amount in destination currency
         Optional<CurrencyAmount> optionalCurrencyAmount = wallet.getCurrencyAmounts().stream().filter(item -> item.getCurrency().equals(currencyTo)).findFirst();
-        this.updateCurrencyAmountTo(wallet, currencyTo, amount, price, optionalCurrencyAmount);
+        this.updateCurrencyAmountTo(wallet, currencyTo, amount, value, optionalCurrencyAmount);
+        // Update the wallet
         this.walletService.update(wallet);
     }
 
@@ -71,6 +104,35 @@ public class CryptoCurrencyOperationService {
      * @param amount       the amount
      */
     public void transfer(Long walletIdFrom, Long walletIdTo, String currencyFrom, String currencyTo, Double amount) {
+        this.transfer(walletIdFrom, walletIdTo, currencyFrom, currencyTo, amount, null, null);
+    }
+
+    /**
+     * Transfer.
+     *
+     * @param walletIdFrom the wallet id from
+     * @param walletIdTo   the wallet id to
+     * @param currencyFrom the currency from
+     * @param currencyTo   the currency to
+     * @param amount       the amount
+     * @param price        the price
+     */
+    public void transfer(Long walletIdFrom, Long walletIdTo, String currencyFrom, String currencyTo, Double amount, Double price) {
+        this.transfer(walletIdFrom, walletIdTo, currencyFrom, currencyTo, amount, price, Boolean.FALSE);
+    }
+
+    /**
+     * Transfer.
+     *
+     * @param walletIdFrom  the wallet id from
+     * @param walletIdTo    the wallet id to
+     * @param currencyFrom  the currency from
+     * @param currencyTo    the currency to
+     * @param amount        the amount
+     * @param price         the price
+     * @param validatePrice the validate price
+     */
+    public void transfer(Long walletIdFrom, Long walletIdTo, String currencyFrom, String currencyTo, Double amount, Double price, Boolean validatePrice) {
         this.validateTransferInputs(walletIdFrom, walletIdTo, currencyFrom, currencyTo, amount);
         Wallet walletFrom = this.walletService.findForWrite(walletIdFrom);
         Wallet walletTo = this.walletService.findForWrite(walletIdTo);
@@ -92,14 +154,35 @@ public class CryptoCurrencyOperationService {
             throw new ValidationException("The amount exceeds the available");
         }
         // Conversion
-        Double price = cryptoCurrencyService.convert(currencyFrom, currencyTo);
-        // Update wallet from
+        Double value = this.getFinalPrice(currencyFrom, currencyTo, price, validatePrice);
+        // Substracts the amount in the from currency
         currencyAmountFrom.setAmount(currencyAmountFrom.getAmount() - amount);
+        // Update wallet from
         this.walletService.update(walletFrom);
-        // Update wallet to
+        // Update the amount in destination currency
         Optional<CurrencyAmount> optionalCurrencyAmount = walletTo.getCurrencyAmounts().stream().filter(item -> item.getCurrency().equals(currencyTo)).findFirst();
-        this.updateCurrencyAmountTo(walletTo, currencyTo, amount, price, optionalCurrencyAmount);
+        this.updateCurrencyAmountTo(walletTo, currencyTo, amount, value, optionalCurrencyAmount);
+        // Update wallet to
         this.walletService.update(walletTo);
+    }
+
+    private Double getFinalPrice(String currencyFrom, String currencyTo, Double price, Boolean validatePrice) {
+        Double value;
+        if (price != null) {
+            if (price <= 0) {
+                throw new ValidationException("Price must be greater than zero");
+            }
+            if (validatePrice) {
+                Double diff = price / cryptoCurrencyService.convert(currencyFrom, currencyTo);
+                if (diff >= 1 + this.appConfig.getPriceTolerance() || diff <= 1 - this.appConfig.getPriceTolerance()) {
+                    throw new ValidationException("The price is different from the official");
+                }
+            }
+            value = price;
+        } else {
+            value = cryptoCurrencyService.convert(currencyFrom, currencyTo);
+        }
+        return value;
     }
 
     private void updateCurrencyAmountTo(Wallet wallet, String currency, Double amount, Double price, Optional<CurrencyAmount> optionalCurrencyAmount) {
