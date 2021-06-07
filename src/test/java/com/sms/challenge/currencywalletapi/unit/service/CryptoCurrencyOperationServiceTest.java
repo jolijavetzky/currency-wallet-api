@@ -16,6 +16,7 @@ import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.springframework.boot.test.context.SpringBootTest;
 
+import java.util.HashSet;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -71,10 +72,25 @@ public class CryptoCurrencyOperationServiceTest {
     }
 
     /**
-     * Test buy.
+     * Test buy currency to exists.
      */
     @Test
-    void testBuy() {
+    void testBuyCurrencyToExists() {
+        CurrencyAmount currencyAmount1 = new CurrencyAmount(CURRENCY_SYMBOL_FROM, CURRENCY_INITIAL_AMOUNT);
+        CurrencyAmount currencyAmount2 = new CurrencyAmount(CURRENCY_SYMBOL_TO, CURRENCY_INITIAL_AMOUNT);
+        Wallet wallet = new Wallet("MyWallet", Stream.of(currencyAmount1, currencyAmount2).collect(Collectors.toSet()));
+        this.service.buy(wallet, CURRENCY_SYMBOL_FROM, CURRENCY_SYMBOL_TO, CURRENCY_AMOUNT_TO_BUY);
+        CurrencyAmount currencyAmountFrom = wallet.getCurrencyAmounts().stream().filter(item -> item.getCurrency().equals(CURRENCY_SYMBOL_FROM)).findFirst().get();
+        CurrencyAmount currencyAmountTo = wallet.getCurrencyAmounts().stream().filter(item -> item.getCurrency().equals(CURRENCY_SYMBOL_TO)).findFirst().get();
+        assertEquals(CURRENCY_INITIAL_AMOUNT - CURRENCY_AMOUNT_TO_BUY, currencyAmountFrom.getAmount());
+        assertEquals(CURRENCY_INITIAL_AMOUNT + (CURRENCY_AMOUNT_TO_BUY * CURRENCY_PRICE), currencyAmountTo.getAmount());
+    }
+
+    /**
+     * Test buy currency to not exists.
+     */
+    @Test
+    void testBuyCurrencyToNotExists() {
         CurrencyAmount currencyAmount = new CurrencyAmount(CURRENCY_SYMBOL_FROM, CURRENCY_INITIAL_AMOUNT);
         Wallet wallet = new Wallet("MyWallet", Stream.of(currencyAmount).collect(Collectors.toSet()));
         this.service.buy(wallet, CURRENCY_SYMBOL_FROM, CURRENCY_SYMBOL_TO, CURRENCY_AMOUNT_TO_BUY);
@@ -118,5 +134,36 @@ public class CryptoCurrencyOperationServiceTest {
 
         Exception exception9 = assertThrows(ValidationException.class, () -> service.buy(wallet, CURRENCY_SYMBOL_FROM, CURRENCY_SYMBOL_TO, CURRENCY_INITIAL_AMOUNT + 0.1));
         assertTrue(exception9.getMessage().contains("The amount exceeds the available"));
+    }
+
+    /**
+     * Test transfer currency to exists.
+     */
+    @Test
+    void testTransferCurrencyToExists() {
+        CurrencyAmount currencyAmount1 = new CurrencyAmount(CURRENCY_SYMBOL_FROM, CURRENCY_INITIAL_AMOUNT);
+        Wallet wallet1 = new Wallet("MyWallet", Stream.of(currencyAmount1).collect(Collectors.toSet()));
+        CurrencyAmount currencyAmount2 = new CurrencyAmount(CURRENCY_SYMBOL_TO, CURRENCY_INITIAL_AMOUNT);
+        Wallet wallet2 = new Wallet("MyWallet", Stream.of(currencyAmount2).collect(Collectors.toSet()));
+        this.service.transfer(wallet1, wallet2, CURRENCY_SYMBOL_FROM, CURRENCY_SYMBOL_TO, CURRENCY_AMOUNT_TO_BUY);
+        CurrencyAmount currencyAmountFrom = wallet1.getCurrencyAmounts().stream().filter(item -> item.getCurrency().equals(CURRENCY_SYMBOL_FROM)).findFirst().get();
+        CurrencyAmount currencyAmountTo = wallet2.getCurrencyAmounts().stream().filter(item -> item.getCurrency().equals(CURRENCY_SYMBOL_TO)).findFirst().get();
+        assertEquals(CURRENCY_INITIAL_AMOUNT - CURRENCY_AMOUNT_TO_BUY, currencyAmountFrom.getAmount());
+        assertEquals(CURRENCY_INITIAL_AMOUNT + (CURRENCY_AMOUNT_TO_BUY * CURRENCY_PRICE), currencyAmountTo.getAmount());
+    }
+
+    /**
+     * Test transfer currency to not exists.
+     */
+    @Test
+    void testTransferCurrencyToNotExists() {
+        CurrencyAmount currencyAmount = new CurrencyAmount(CURRENCY_SYMBOL_FROM, CURRENCY_INITIAL_AMOUNT);
+        Wallet wallet1 = new Wallet("MyWallet", Stream.of(currencyAmount).collect(Collectors.toSet()));
+        Wallet wallet2 = new Wallet("MyWallet", new HashSet<>());
+        this.service.transfer(wallet1, wallet2, CURRENCY_SYMBOL_FROM, CURRENCY_SYMBOL_TO, CURRENCY_AMOUNT_TO_BUY);
+        CurrencyAmount currencyAmountFrom = wallet1.getCurrencyAmounts().stream().filter(item -> item.getCurrency().equals(CURRENCY_SYMBOL_FROM)).findFirst().get();
+        CurrencyAmount currencyAmountTo = wallet2.getCurrencyAmounts().stream().filter(item -> item.getCurrency().equals(CURRENCY_SYMBOL_TO)).findFirst().get();
+        assertEquals(CURRENCY_INITIAL_AMOUNT - CURRENCY_AMOUNT_TO_BUY, currencyAmountFrom.getAmount());
+        assertEquals(CURRENCY_AMOUNT_TO_BUY * CURRENCY_PRICE, currencyAmountTo.getAmount());
     }
 }

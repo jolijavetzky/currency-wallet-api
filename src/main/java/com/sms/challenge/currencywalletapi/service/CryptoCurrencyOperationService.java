@@ -34,7 +34,71 @@ public class CryptoCurrencyOperationService {
      * @param amount       the amount
      */
     public void buy(Wallet wallet, String currencyFrom, String currencyTo, Double amount) {
-        // Input validations
+        this.validateBuyInputs(wallet, currencyFrom, currencyTo, amount);
+        // Data validations
+        if (this.currencyService.findBySymbol(currencyFrom) == null) {
+            throw new NotFoundException("Currency from not found");
+        }
+        if (this.currencyService.findBySymbol(currencyTo) == null) {
+            throw new NotFoundException("Currency to not found");
+        }
+        CurrencyAmount currencyAmountFrom = wallet.getCurrencyAmounts().stream().filter(item -> item.getCurrency().equals(currencyFrom)).findFirst().orElseThrow(() -> new ValidationException("Wallet does not contain the currency from"));
+        if (amount > currencyAmountFrom.getAmount()) {
+            throw new ValidationException("The amount exceeds the available");
+        }
+        // Conversion
+        Double price = cryptoCurrencyService.convert(currencyFrom, currencyTo);
+        // Update in wallet
+        currencyAmountFrom.setAmount(currencyAmountFrom.getAmount() - amount);
+        Optional<CurrencyAmount> optionalCurrencyAmount = wallet.getCurrencyAmounts().stream().filter(item -> item.getCurrency().equals(currencyTo)).findFirst();
+        this.updateCurrencyAmountTo(wallet, currencyTo, amount, price, optionalCurrencyAmount);
+        this.walletService.update(wallet);
+    }
+
+    /**
+     * Transfer.
+     *
+     * @param walletFrom   the wallet from
+     * @param walletTo     the wallet to
+     * @param currencyFrom the currency from
+     * @param currencyTo   the currency to
+     * @param amount       the amount
+     */
+    public void transfer(Wallet walletFrom, Wallet walletTo, String currencyFrom, String currencyTo, Double amount) {
+        this.validateTransferInputs(walletFrom, walletTo, currencyFrom, currencyTo, amount);
+        // Data validations
+        if (this.currencyService.findBySymbol(currencyFrom) == null) {
+            throw new NotFoundException("Currency from not found");
+        }
+        if (this.currencyService.findBySymbol(currencyTo) == null) {
+            throw new NotFoundException("Currency to not found");
+        }
+        CurrencyAmount currencyAmountFrom = walletFrom.getCurrencyAmounts().stream().filter(item -> item.getCurrency().equals(currencyFrom)).findFirst().orElseThrow(() -> new ValidationException("Wallet from does not contain the currency from"));
+        if (amount > currencyAmountFrom.getAmount()) {
+            throw new ValidationException("The amount exceeds the available");
+        }
+        // Conversion
+        Double price = cryptoCurrencyService.convert(currencyFrom, currencyTo);
+        // Update wallet from
+        currencyAmountFrom.setAmount(currencyAmountFrom.getAmount() - amount);
+        this.walletService.update(walletFrom);
+        // Update wallet to
+        Optional<CurrencyAmount> optionalCurrencyAmount = walletTo.getCurrencyAmounts().stream().filter(item -> item.getCurrency().equals(currencyTo)).findFirst();
+        this.updateCurrencyAmountTo(walletTo, currencyTo, amount, price, optionalCurrencyAmount);
+        this.walletService.update(walletTo);
+    }
+
+    private void updateCurrencyAmountTo(Wallet wallet, String currency, Double amount, Double price, Optional<CurrencyAmount> optionalCurrencyAmount) {
+        if (optionalCurrencyAmount.isPresent()) {
+            CurrencyAmount currencyAmountTo = optionalCurrencyAmount.get();
+            currencyAmountTo.setAmount(currencyAmountTo.getAmount() + (price * amount));
+        } else {
+            CurrencyAmount newCurrencyAmount = new CurrencyAmount(currency, price * amount);
+            wallet.getCurrencyAmounts().add(newCurrencyAmount);
+        }
+    }
+
+    private void validateBuyInputs(Wallet wallet, String currencyFrom, String currencyTo, Double amount) {
         if (wallet == null) {
             throw new ValidationException("Wallet is required");
         }
@@ -47,32 +111,29 @@ public class CryptoCurrencyOperationService {
         if (amount == null) {
             throw new ValidationException("Amount is required");
         }
-        if (amount.doubleValue() <= 0) {
+        if (amount <= 0) {
             throw new ValidationException("Amount must be greater than zero");
         }
-        // Data validations
-        if (this.currencyService.findBySymbol(currencyFrom) == null) {
-            throw new NotFoundException("Currency from not found");
+    }
+
+    private void validateTransferInputs(Wallet walletFrom, Wallet walletTo, String currencyFrom, String currencyTo, Double amount) {
+        if (walletFrom == null) {
+            throw new ValidationException("Wallet from is required");
         }
-        if (this.currencyService.findBySymbol(currencyTo) == null) {
-            throw new NotFoundException("Currency to not found");
+        if (walletTo == null) {
+            throw new ValidationException("Wallet to is required");
         }
-        CurrencyAmount currencyAmountFrom = wallet.getCurrencyAmounts().stream().filter(item -> item.getCurrency().equals(currencyFrom)).findFirst().orElseThrow(() -> new ValidationException("Wallet does not contain the currency from"));
-        if (amount > currencyAmountFrom.getAmount().doubleValue()) {
-            throw new ValidationException("The amount exceeds the available");
+        if (StringUtils.isEmpty(currencyFrom)) {
+            throw new ValidationException("Currency from is required");
         }
-        // Conversion
-        Double price = cryptoCurrencyService.convert(currencyFrom, currencyTo);
-        // Update in wallet
-        currencyAmountFrom.setAmount(currencyAmountFrom.getAmount() - amount);
-        Optional<CurrencyAmount> optional = wallet.getCurrencyAmounts().stream().filter(item -> item.getCurrency().equals(currencyTo)).findFirst();
-        if (optional.isPresent()) {
-            CurrencyAmount currencyAmountTo = optional.get();
-            currencyAmountTo.setAmount(currencyAmountTo.getAmount() + (price * amount));
-        } else {
-            CurrencyAmount newCurrencyAmount = new CurrencyAmount(currencyTo, price * amount);
-            wallet.getCurrencyAmounts().add(newCurrencyAmount);
+        if (StringUtils.isEmpty(currencyTo)) {
+            throw new ValidationException("Currency to is required");
         }
-        this.walletService.update(wallet);
+        if (amount == null) {
+            throw new ValidationException("Amount is required");
+        }
+        if (amount <= 0) {
+            throw new ValidationException("Amount must be greater than zero");
+        }
     }
 }
