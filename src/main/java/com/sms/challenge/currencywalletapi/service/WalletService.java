@@ -6,10 +6,14 @@ import com.sms.challenge.currencywalletapi.persistence.entity.Wallet;
 import com.sms.challenge.currencywalletapi.persistence.repository.WalletRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.util.CollectionUtils;
 import org.springframework.util.StringUtils;
 
 import javax.transaction.Transactional;
 
+/**
+ * The type Wallet service.
+ */
 @Service
 @Transactional
 public class WalletService {
@@ -17,6 +21,12 @@ public class WalletService {
     @Autowired
     private WalletRepository walletRepository;
 
+    /**
+     * Find wallet.
+     *
+     * @param id the id
+     * @return the wallet
+     */
     public Wallet find(Long id) {
         // Input validations
         if (id == null) {
@@ -26,6 +36,12 @@ public class WalletService {
         return this.walletRepository.findById(id).orElseThrow(() -> new NotFoundException("Wallet not found"));
     }
 
+    /**
+     * Create wallet.
+     *
+     * @param wallet the wallet
+     * @return the wallet
+     */
     public Wallet create(Wallet wallet) {
         // Input validations
         if (wallet == null) {
@@ -37,16 +53,22 @@ public class WalletService {
         if (StringUtils.isEmpty(wallet.getName())) {
             throw new ValidationException("Name is required");
         }
-        if (wallet.getCurrencyAmounts().stream().anyMatch(item -> item.getAmount() == null)) {
+        if (!CollectionUtils.isEmpty(wallet.getCurrencyAmounts()) && wallet.getCurrencyAmounts().stream().anyMatch(item -> item.getAmount() == null)) {
             throw new ValidationException("Amount is required in currency amounts");
         }
-        if (wallet.getCurrencyAmounts().stream().anyMatch(item -> item.getCurrency() == null)) {
+        if (!CollectionUtils.isEmpty(wallet.getCurrencyAmounts()) && wallet.getCurrencyAmounts().stream().anyMatch(item -> item.getCurrency() == null)) {
             throw new ValidationException("Currency is required in currency amounts");
         }
         // Save wallet
         return walletRepository.save(wallet);
     }
 
+    /**
+     * Update wallet.
+     *
+     * @param wallet the wallet
+     * @return the wallet
+     */
     public Wallet update(Wallet wallet) {
         // Input validations
         if (wallet == null) {
@@ -55,15 +77,19 @@ public class WalletService {
         if (wallet.getId() == null) {
             throw new ValidationException("Id is required");
         }
-        Wallet persisted = this.walletRepository.findById(wallet.getId()).orElseThrow(() -> new NotFoundException("Wallet not found"));
+        this.walletRepository.findById(wallet.getId()).orElseThrow(() -> new NotFoundException("Wallet not found"));
         if (StringUtils.isEmpty(wallet.getName())) {
             throw new ValidationException("Name is required");
         }
         // Update wallet
-        persisted.setName(wallet.getName());
-        return walletRepository.save(persisted);
+        return walletRepository.save(wallet);
     }
 
+    /**
+     * Delete.
+     *
+     * @param id the id
+     */
     public void delete(Long id) {
         // Input validations
         if (id == null) {

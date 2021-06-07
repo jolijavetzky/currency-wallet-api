@@ -8,7 +8,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.dao.DataIntegrityViolationException;
 
-import java.math.BigDecimal;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -40,9 +39,9 @@ class WalletRepositoryTest {
     @Test
     public void testSave() {
         Set<CurrencyAmount> currencyAmounts = new HashSet<>();
-        currencyAmounts.add(new CurrencyAmount("BTC1", new BigDecimal(98.69)));
-        currencyAmounts.add(new CurrencyAmount("BTC2", new BigDecimal(98.79)));
-        currencyAmounts.add(new CurrencyAmount("BTC3", new BigDecimal(98.69)));
+        currencyAmounts.add(new CurrencyAmount("BTC1", 98.69));
+        currencyAmounts.add(new CurrencyAmount("BTC2", 98.79));
+        currencyAmounts.add(new CurrencyAmount("BTC3", 98.69));
         Wallet wallet = new Wallet("MyWallet", currencyAmounts);
         repository.save(wallet);
         assertNotNull(wallet.getId());
@@ -58,7 +57,7 @@ class WalletRepositoryTest {
         assertTrue(exception.getMessage().contains("not-null property references a null or transient value"));
 
         Set<CurrencyAmount> currencyAmounts1 = new HashSet<>();
-        currencyAmounts1.add(new CurrencyAmount(null, new BigDecimal(98.69)));
+        currencyAmounts1.add(new CurrencyAmount(null, 98.69));
         Wallet wallet1 = new Wallet("MyWallet", currencyAmounts1);
         assertThrows(DataIntegrityViolationException.class, () -> repository.save(wallet1));
 
@@ -84,7 +83,7 @@ class WalletRepositoryTest {
         wallet = repository.findById(wallet.getId()).get();
         String newName = "Pedro";
         wallet.setName(newName);
-        wallet.getCurrencyAmounts().add(new CurrencyAmount("BTC", new BigDecimal(98.69)));
+        wallet.getCurrencyAmounts().add(new CurrencyAmount("BTC", 98.69));
         repository.save(wallet);
         assertEquals(newName, wallet.getName());
         assertEquals(1, wallet.getCurrencyAmounts().size());

@@ -12,7 +12,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.dao.DataIntegrityViolationException;
 
-import java.math.BigDecimal;
 import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -42,7 +41,7 @@ class WalletServiceTest {
      */
     @BeforeEach
     void setUp() {
-        CurrencyAmount currencyAmount = new CurrencyAmount("BTC", new BigDecimal(98.69));
+        CurrencyAmount currencyAmount = new CurrencyAmount("BTC", 98.69);
         repository.save(new Wallet("MyWallet", Stream.of(currencyAmount).collect(Collectors.toSet())));
     }
 
@@ -74,8 +73,8 @@ class WalletServiceTest {
      */
     @Test
     void testSave() {
-        CurrencyAmount ca1 = new CurrencyAmount("BTC", new BigDecimal(98.69));
-        CurrencyAmount ca2 = new CurrencyAmount("BTCA", new BigDecimal(98.79));
+        CurrencyAmount ca1 = new CurrencyAmount("BTC", 98.69);
+        CurrencyAmount ca2 = new CurrencyAmount("BTCA", 98.79);
         Set<CurrencyAmount> currencyAmounts = Stream.of(ca1, ca2).collect(Collectors.toSet());
         Wallet wallet = new Wallet("MyWallet", currencyAmounts);
         wallet = service.create(wallet);
@@ -88,8 +87,8 @@ class WalletServiceTest {
      */
     @Test
     void testValidateSave() {
-        CurrencyAmount ca1 = new CurrencyAmount("BTC", new BigDecimal(98.69));
-        CurrencyAmount ca2 = new CurrencyAmount("BTC", new BigDecimal(98.79));
+        CurrencyAmount ca1 = new CurrencyAmount("BTC", 98.69);
+        CurrencyAmount ca2 = new CurrencyAmount("BTC", 98.79);
         Set<CurrencyAmount> currencyAmounts1 = Stream.of(ca1, ca2).collect(Collectors.toSet());
         Wallet wallet = new Wallet("MyWallet", currencyAmounts1);
         Exception exception1 = assertThrows(DataIntegrityViolationException.class, () -> service.create(wallet));
@@ -110,7 +109,7 @@ class WalletServiceTest {
         Exception exception5 = assertThrows(ValidationException.class, () -> service.create(new Wallet("MyWallet", currencyAmounts2)));
         assertTrue(exception5.getMessage().contains("Amount is required in currency amounts"));
 
-        CurrencyAmount ca4 = new CurrencyAmount(null, new BigDecimal(98.79));
+        CurrencyAmount ca4 = new CurrencyAmount(null, 98.79);
         Set<CurrencyAmount> currencyAmounts3 = Stream.of(ca4).collect(Collectors.toSet());
 
         Exception exception6 = assertThrows(ValidationException.class, () -> service.create(new Wallet("MyWallet", currencyAmounts3)));

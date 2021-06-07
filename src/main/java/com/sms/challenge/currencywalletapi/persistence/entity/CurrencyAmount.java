@@ -4,7 +4,6 @@ import lombok.Data;
 import org.springframework.lang.NonNull;
 
 import javax.persistence.*;
-import java.math.BigDecimal;
 
 /**
  * The type Currency amount.
@@ -25,7 +24,7 @@ public class CurrencyAmount {
 
     @NonNull
     @Column(name = "amount", nullable = false)
-    private BigDecimal amount;
+    private Double amount;
 
     /**
      * Instantiates a new Currency amount.
@@ -40,7 +39,7 @@ public class CurrencyAmount {
      * @param currency the currency
      * @param amount   the amount
      */
-    public CurrencyAmount(String currency, BigDecimal amount) {
+    public CurrencyAmount(String currency, Double amount) {
         this.currency = currency;
         this.amount = amount;
     }
@@ -59,7 +58,7 @@ public class CurrencyAmount {
      */
     public static class Builder {
         private String currency;
-        private BigDecimal amount;
+        private Double amount;
 
         /**
          * Currency currency amount . builder.
@@ -78,7 +77,7 @@ public class CurrencyAmount {
          * @param amount the amount
          * @return the currency amount . builder
          */
-        public CurrencyAmount.Builder amount(BigDecimal amount) {
+        public CurrencyAmount.Builder amount(Double amount) {
             this.amount = amount;
             return this;
         }

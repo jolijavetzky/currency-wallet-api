@@ -10,7 +10,7 @@ import javax.persistence.*;
  */
 @Data
 @Entity
-@Table(name = "currencies")
+@Table(name = "currencies", uniqueConstraints = @UniqueConstraint(columnNames = {"symbol"}))
 public class Currency {
 
     @Id
@@ -19,7 +19,7 @@ public class Currency {
     private Long id;
 
     @NonNull
-    @Column(name = "name", nullable = false)
+    @Column(name = "symbol", nullable = false)
     private String symbol;
 
     @NonNull

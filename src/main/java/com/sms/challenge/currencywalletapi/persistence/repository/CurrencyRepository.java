@@ -14,6 +14,14 @@ import java.util.Set;
 public interface CurrencyRepository extends JpaRepository<Currency, Long> {
 
     /**
+     * Find by symbol currency.
+     *
+     * @param symbol the symbol
+     * @return the currency
+     */
+    Currency findBySymbol(String symbol);
+
+    /**
      * Find by crypto true list.
      *
      * @return the list

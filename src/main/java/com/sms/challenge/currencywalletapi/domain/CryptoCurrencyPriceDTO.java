@@ -2,8 +2,6 @@ package com.sms.challenge.currencywalletapi.domain;
 
 import lombok.Data;
 
-import java.math.BigDecimal;
-
 /**
  * The type Crypto currency price dto.
  */

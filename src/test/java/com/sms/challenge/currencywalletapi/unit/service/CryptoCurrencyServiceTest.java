@@ -1,9 +1,7 @@
-package com.sms.challenge.currencywalletapi.integration.service;
+package com.sms.challenge.currencywalletapi.unit.service;
 
 import com.sms.challenge.currencywalletapi.exception.NotFoundException;
-import com.sms.challenge.currencywalletapi.exception.ValidationException;
 import com.sms.challenge.currencywalletapi.persistence.entity.CryptoCurrency;
-import com.sms.challenge.currencywalletapi.persistence.entity.CryptoCurrencyPrice;
 import com.sms.challenge.currencywalletapi.persistence.entity.Currency;
 import com.sms.challenge.currencywalletapi.service.CryptoCurrencyFetcherService;
 import com.sms.challenge.currencywalletapi.service.CryptoCurrencyService;
@@ -15,7 +13,6 @@ import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.springframework.boot.test.context.SpringBootTest;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -31,26 +28,11 @@ import static org.mockito.Mockito.when;
 @SpringBootTest
 public class CryptoCurrencyServiceTest {
 
-    /**
-     * The Crypto currency symbol.
-     */
-    static final String CRYPTO_CURRENCY_SYMBOL = "BTC";
-    /**
-     * The Not crypto currency symbol 1.
-     */
-    static final String NOT_CRYPTO_CURRENCY_SYMBOL_1 = "USD";
-    /**
-     * The Not crypto currency symbol 2.
-     */
-    static final String NOT_CRYPTO_CURRENCY_SYMBOL_2 = "EUR";
-    /**
-     * The Not crypto currency price 1.
-     */
-    static final Double NOT_CRYPTO_CURRENCY_PRICE_1 = 65.32;
-    /**
-     * The Not crypto currency price 2.
-     */
-    static final Double NOT_CRYPTO_CURRENCY_PRICE_2 = 48.25;
+    private static final String CRYPTO_CURRENCY_SYMBOL = "BTC";
+    private static final String NOT_CRYPTO_CURRENCY_SYMBOL_1 = "USD";
+    private static final String NOT_CRYPTO_CURRENCY_SYMBOL_2 = "EUR";
+    private static final Double NOT_CRYPTO_CURRENCY_PRICE_1 = 65.32;
+    private static final Double NOT_CRYPTO_CURRENCY_PRICE_2 = 48.25;
 
     /**
      * The Fetcher service.

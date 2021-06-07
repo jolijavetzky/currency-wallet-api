@@ -1,9 +1,6 @@
 package com.sms.challenge.currencywalletapi.domain;
 
-import com.sms.challenge.currencywalletapi.persistence.entity.CurrencyAmount;
 import lombok.Data;
-
-import java.math.BigDecimal;
 
 /**
  * The type Currency amount dto.
@@ -12,7 +9,7 @@ import java.math.BigDecimal;
 public class CurrencyAmountDTO {
 
     private String currency;
-    private BigDecimal amount;
+    private Double amount;
 
     /**
      * Instantiates a new Currency amount dto.
@@ -20,7 +17,7 @@ public class CurrencyAmountDTO {
      * @param currency the currency
      * @param amount   the amount
      */
-    public CurrencyAmountDTO(String currency, BigDecimal amount) {
+    public CurrencyAmountDTO(String currency, Double amount) {
         this.currency = currency;
         this.amount = amount;
     }
@@ -39,7 +36,7 @@ public class CurrencyAmountDTO {
      */
     public static class Builder {
         private String currency;
-        private BigDecimal amount;
+        private Double amount;
 
         /**
          * Currency currency amount . builder.
@@ -58,7 +55,7 @@ public class CurrencyAmountDTO {
          * @param amount the amount
          * @return the currency amount . builder
          */
-        public CurrencyAmountDTO.Builder amount(BigDecimal amount) {
+        public CurrencyAmountDTO.Builder amount(Double amount) {
             this.amount = amount;
             return this;
         }

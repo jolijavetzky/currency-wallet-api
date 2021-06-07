@@ -1,9 +1,12 @@
 package com.sms.challenge.currencywalletapi.service;
 
+import com.sms.challenge.currencywalletapi.exception.NotFoundException;
+import com.sms.challenge.currencywalletapi.exception.ValidationException;
 import com.sms.challenge.currencywalletapi.persistence.entity.Currency;
 import com.sms.challenge.currencywalletapi.persistence.repository.CurrencyRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.util.StringUtils;
 
 import javax.transaction.Transactional;
 import java.util.List;
@@ -25,6 +28,23 @@ public class CurrencyService {
      */
     public List<Currency> findAll() {
         return repository.findAll();
+    }
+
+    /**
+     * Find by symbol currency.
+     *
+     * @param symbol the symbol
+     * @return the currency
+     */
+    public Currency findBySymbol(String symbol) {
+        if (StringUtils.isEmpty(symbol)) {
+            throw new ValidationException("Symbol is required");
+        }
+        Currency currency = repository.findBySymbol(symbol);
+        if (currency == null) {
+            throw new NotFoundException("Currency not found");
+        }
+        return currency;
     }
 
     /**
