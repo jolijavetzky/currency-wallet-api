@@ -56,10 +56,10 @@ public class CryptoCurrencyService {
      */
     @Cacheable("currency")
     public Double convert(String currencyFrom, String currencyTo) {
-        Map<String, Map<String, Double>> data = this.fetcherService.fetch(currencyFrom, currencyTo);
+        Map<String, Double> data = this.fetcherService.fetch(currencyFrom, currencyTo);
         if (data.isEmpty()) {
             throw new NotFoundException("Currency symbol not found");
         }
-        return data.get(currencyFrom).get(currencyTo);
+        return data.get(currencyTo);
     }
 }

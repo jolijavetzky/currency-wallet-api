@@ -62,8 +62,8 @@ public class CryptoCurrencyFetcherService {
      * @param currencyTo   the currency to
      * @return the map
      */
-    public Map<String, Map<String, Double>> fetch(String currencyFrom, String currencyTo) {
-        Map<String, Map<String, Double>> data = webClient.get()
+    public Map<String, Double> fetch(String currencyFrom, String currencyTo) {
+        Map<String, Double> data = webClient.get()
                 .uri(String.join("", appConfig.getCryptoCompareApiBaseUrl(), "/price?fsym=", currencyFrom, "&tsyms=", currencyTo))
                 .retrieve()
                 .bodyToMono(Map.class)

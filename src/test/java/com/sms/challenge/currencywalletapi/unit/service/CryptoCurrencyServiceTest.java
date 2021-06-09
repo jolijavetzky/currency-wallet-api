@@ -68,7 +68,7 @@ public class CryptoCurrencyServiceTest {
         prices.put(NOT_CRYPTO_CURRENCY_SYMBOL_2, NOT_CRYPTO_CURRENCY_PRICE_2);
         currencies.put(CRYPTO_CURRENCY_SYMBOL, prices);
         when(this.fetcherService.fetch(Mockito.anyListOf(String.class), Mockito.anyListOf(String.class))).thenReturn(currencies);
-        when(this.fetcherService.fetch(Mockito.anyString(), Mockito.anyString())).thenReturn(currencies);
+        when(this.fetcherService.fetch(Mockito.anyString(), Mockito.anyString())).thenReturn(prices);
     }
 
     /**
