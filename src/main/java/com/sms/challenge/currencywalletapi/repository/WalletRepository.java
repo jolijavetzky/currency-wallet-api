@@ -8,6 +8,7 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import javax.persistence.LockModeType;
+import java.util.Optional;
 
 /**
  * The interface Wallet repository.
@@ -26,7 +27,7 @@ public interface WalletRepository extends JpaRepository<Wallet, Long> {
      */
     @Lock(LockModeType.PESSIMISTIC_READ)
     @Query("select w from Wallet w where w.id = :id")
-    Wallet findByIdForRead(@Param("id") Long id);
+    Optional<Wallet> findByIdForRead(@Param("id") Long id);
 
     /**
      * Find by id for write wallet.
@@ -39,5 +40,5 @@ public interface WalletRepository extends JpaRepository<Wallet, Long> {
      */
     @Lock(LockModeType.PESSIMISTIC_WRITE)
     @Query("select w from Wallet w where w.id = :id")
-    Wallet findByIdForWrite(@Param("id") Long id);
+    Optional<Wallet> findByIdForWrite(@Param("id") Long id);
 }

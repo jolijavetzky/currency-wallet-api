@@ -48,11 +48,7 @@ public class WalletService {
             throw new ValidationException("Id is required");
         }
         // Find wallet
-        Wallet wallet = this.walletRepository.findByIdForWrite(id);
-        if (wallet == null) {
-            throw new NotFoundException("Wallet not found");
-        }
-        return wallet;
+        return this.walletRepository.findByIdForWrite(id).orElseThrow(() -> new NotFoundException("Wallet not found"));
     }
 
     /**
@@ -67,11 +63,7 @@ public class WalletService {
             throw new ValidationException("Id is required");
         }
         // Find wallet
-        Wallet wallet = this.walletRepository.findByIdForRead(id);
-        if (wallet == null) {
-            throw new NotFoundException("Wallet not found");
-        }
-        return wallet;
+        return this.walletRepository.findByIdForRead(id).orElseThrow(() -> new NotFoundException("Wallet not found"));
     }
 
     /**
