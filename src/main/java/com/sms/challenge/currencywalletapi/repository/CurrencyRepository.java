@@ -1,11 +1,10 @@
-package com.sms.challenge.currencywalletapi.persistence.repository;
+package com.sms.challenge.currencywalletapi.repository;
 
-import com.sms.challenge.currencywalletapi.persistence.entity.Currency;
+import com.sms.challenge.currencywalletapi.entity.Currency;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
-import java.util.Set;
 
 /**
  * The interface Currency repository.

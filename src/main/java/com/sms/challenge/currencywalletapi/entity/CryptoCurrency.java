@@ -1,15 +1,15 @@
-package com.sms.challenge.currencywalletapi.persistence.entity;
+package com.sms.challenge.currencywalletapi.entity;
 
 import lombok.Data;
 
+import java.io.Serializable;
 import java.util.List;
-import java.util.Set;
 
 /**
  * The type Crypto currency.
  */
 @Data
-public class CryptoCurrency {
+public class CryptoCurrency implements Serializable {
 
     private String currency;
     private List<CryptoCurrencyPrice> prices;

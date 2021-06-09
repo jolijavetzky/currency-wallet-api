@@ -1,6 +1,6 @@
 package com.sms.challenge.currencywalletapi.bean;
 
-import com.sms.challenge.currencywalletapi.persistence.entity.Currency;
+import com.sms.challenge.currencywalletapi.entity.Currency;
 import com.sms.challenge.currencywalletapi.service.CurrencyService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;

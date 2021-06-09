@@ -2,7 +2,7 @@ package com.sms.challenge.currencywalletapi.integration.service;
 
 import com.sms.challenge.currencywalletapi.exception.NotFoundException;
 import com.sms.challenge.currencywalletapi.exception.ValidationException;
-import com.sms.challenge.currencywalletapi.persistence.entity.Currency;
+import com.sms.challenge.currencywalletapi.entity.Currency;
 import com.sms.challenge.currencywalletapi.service.CurrencyService;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;

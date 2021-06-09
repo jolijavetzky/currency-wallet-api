@@ -1,9 +1,9 @@
 package com.sms.challenge.currencywalletapi.service;
 
 import com.sms.challenge.currencywalletapi.exception.NotFoundException;
-import com.sms.challenge.currencywalletapi.persistence.entity.CryptoCurrency;
-import com.sms.challenge.currencywalletapi.persistence.entity.CryptoCurrencyPrice;
-import com.sms.challenge.currencywalletapi.persistence.entity.Currency;
+import com.sms.challenge.currencywalletapi.entity.CryptoCurrency;
+import com.sms.challenge.currencywalletapi.entity.CryptoCurrencyPrice;
+import com.sms.challenge.currencywalletapi.entity.Currency;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
@@ -12,7 +12,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 /**
  * The type Crypto currency service.

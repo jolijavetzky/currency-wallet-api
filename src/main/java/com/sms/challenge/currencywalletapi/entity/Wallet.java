@@ -1,4 +1,4 @@
-package com.sms.challenge.currencywalletapi.persistence.entity;
+package com.sms.challenge.currencywalletapi.entity;
 
 import lombok.Data;
 import org.hibernate.annotations.CreationTimestamp;
@@ -26,7 +26,7 @@ public class Wallet {
     @Column(name = "name", nullable = false)
     private String name;
 
-    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.EAGER)
     @JoinColumn(name = "wallet_id")
     private Set<CurrencyAmount> currencyAmounts;
 

@@ -1,6 +1,6 @@
-package com.sms.challenge.currencywalletapi.persistence.repository;
+package com.sms.challenge.currencywalletapi.repository;
 
-import com.sms.challenge.currencywalletapi.persistence.entity.Wallet;
+import com.sms.challenge.currencywalletapi.entity.Wallet;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Lock;
 import org.springframework.data.jpa.repository.Query;

@@ -1,8 +1,8 @@
 package com.sms.challenge.currencywalletapi.unit.service;
 
 import com.sms.challenge.currencywalletapi.exception.NotFoundException;
-import com.sms.challenge.currencywalletapi.persistence.entity.CryptoCurrency;
-import com.sms.challenge.currencywalletapi.persistence.entity.Currency;
+import com.sms.challenge.currencywalletapi.entity.CryptoCurrency;
+import com.sms.challenge.currencywalletapi.entity.Currency;
 import com.sms.challenge.currencywalletapi.service.CryptoCurrencyFetcherService;
 import com.sms.challenge.currencywalletapi.service.CryptoCurrencyService;
 import com.sms.challenge.currencywalletapi.service.CurrencyService;

@@ -1,8 +1,8 @@
 package com.sms.challenge.currencywalletapi.integration.repository;
 
-import com.sms.challenge.currencywalletapi.persistence.entity.CurrencyAmount;
-import com.sms.challenge.currencywalletapi.persistence.entity.Wallet;
-import com.sms.challenge.currencywalletapi.persistence.repository.WalletRepository;
+import com.sms.challenge.currencywalletapi.entity.CurrencyAmount;
+import com.sms.challenge.currencywalletapi.entity.Wallet;
+import com.sms.challenge.currencywalletapi.repository.WalletRepository;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;

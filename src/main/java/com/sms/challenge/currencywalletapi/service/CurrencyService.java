@@ -2,8 +2,8 @@ package com.sms.challenge.currencywalletapi.service;
 
 import com.sms.challenge.currencywalletapi.exception.NotFoundException;
 import com.sms.challenge.currencywalletapi.exception.ValidationException;
-import com.sms.challenge.currencywalletapi.persistence.entity.Currency;
-import com.sms.challenge.currencywalletapi.persistence.repository.CurrencyRepository;
+import com.sms.challenge.currencywalletapi.entity.Currency;
+import com.sms.challenge.currencywalletapi.repository.CurrencyRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;

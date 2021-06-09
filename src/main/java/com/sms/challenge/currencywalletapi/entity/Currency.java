@@ -1,4 +1,4 @@
-package com.sms.challenge.currencywalletapi.persistence.entity;
+package com.sms.challenge.currencywalletapi.entity;
 
 import lombok.Data;
 import org.springframework.lang.NonNull;

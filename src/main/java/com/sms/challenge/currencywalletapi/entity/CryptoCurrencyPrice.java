@@ -1,12 +1,14 @@
-package com.sms.challenge.currencywalletapi.persistence.entity;
+package com.sms.challenge.currencywalletapi.entity;
 
 import lombok.Data;
+
+import java.io.Serializable;
 
 /**
  * The type Crypto currency price.
  */
 @Data
-public class CryptoCurrencyPrice {
+public class CryptoCurrencyPrice implements Serializable {
 
     private String currency;
     private Double price;

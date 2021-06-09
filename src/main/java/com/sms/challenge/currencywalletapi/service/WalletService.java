@@ -2,8 +2,8 @@ package com.sms.challenge.currencywalletapi.service;
 
 import com.sms.challenge.currencywalletapi.exception.NotFoundException;
 import com.sms.challenge.currencywalletapi.exception.ValidationException;
-import com.sms.challenge.currencywalletapi.persistence.entity.Wallet;
-import com.sms.challenge.currencywalletapi.persistence.repository.WalletRepository;
+import com.sms.challenge.currencywalletapi.entity.Wallet;
+import com.sms.challenge.currencywalletapi.repository.WalletRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
@@ -115,12 +115,13 @@ public class WalletService {
         if (wallet.getId() == null) {
             throw new ValidationException("Id is required");
         }
-        this.walletRepository.findById(wallet.getId()).orElseThrow(() -> new NotFoundException("Wallet not found"));
+        Wallet persisted = this.walletRepository.findById(wallet.getId()).orElseThrow(() -> new NotFoundException("Wallet not found"));
         if (StringUtils.isEmpty(wallet.getName())) {
             throw new ValidationException("Name is required");
         }
+        persisted.setName(wallet.getName());
         // Update wallet
-        return walletRepository.save(wallet);
+        return walletRepository.save(persisted);
     }
 
     /**

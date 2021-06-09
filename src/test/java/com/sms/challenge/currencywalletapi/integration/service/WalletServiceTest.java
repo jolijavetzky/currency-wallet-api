@@ -2,9 +2,9 @@ package com.sms.challenge.currencywalletapi.integration.service;
 
 import com.sms.challenge.currencywalletapi.exception.NotFoundException;
 import com.sms.challenge.currencywalletapi.exception.ValidationException;
-import com.sms.challenge.currencywalletapi.persistence.entity.CurrencyAmount;
-import com.sms.challenge.currencywalletapi.persistence.entity.Wallet;
-import com.sms.challenge.currencywalletapi.persistence.repository.WalletRepository;
+import com.sms.challenge.currencywalletapi.entity.CurrencyAmount;
+import com.sms.challenge.currencywalletapi.entity.Wallet;
+import com.sms.challenge.currencywalletapi.repository.WalletRepository;
 import com.sms.challenge.currencywalletapi.service.WalletService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
