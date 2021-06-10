@@ -172,7 +172,7 @@ public class CryptoCurrencyOperationService {
             if (price <= 0) {
                 throw new ValidationException("Price must be greater than zero");
             }
-            if (validatePrice) {
+            if (validatePrice != null && validatePrice.equals(Boolean.TRUE)) {
                 Double diff = price / cryptoCurrencyService.convert(currencyFrom, currencyTo);
                 if (diff >= 1 + this.appConfig.getPriceTolerance() || diff <= 1 - this.appConfig.getPriceTolerance()) {
                     throw new ValidationException("The price is different from the official");
