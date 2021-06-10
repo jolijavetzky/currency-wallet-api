@@ -5,6 +5,7 @@ import com.sms.challenge.currencywalletapi.controller.WalletController;
 import com.sms.challenge.currencywalletapi.domain.*;
 import com.sms.challenge.currencywalletapi.entity.CurrencyAmount;
 import com.sms.challenge.currencywalletapi.entity.Wallet;
+import com.sms.challenge.currencywalletapi.exception.ExternalServiceException;
 import com.sms.challenge.currencywalletapi.exception.NotFoundException;
 import com.sms.challenge.currencywalletapi.exception.ValidationException;
 import com.sms.challenge.currencywalletapi.service.CryptoCurrencyOperationService;
@@ -357,6 +358,35 @@ class WalletControllerTest {
     }
 
     /**
+     * Test buy service unavailable.
+     *
+     * @throws Exception the exception
+     */
+    @Test
+    void testBuyServiceUnavailable() throws Exception {
+        final long id = 1L;
+        doThrow(ExternalServiceException.class).when(this.operationService).buy(
+                anyLong(),
+                anyString(),
+                anyString(),
+                anyDouble(),
+                anyDouble(),
+                anyBoolean()
+        );
+        BuyOperationDTO dto = new BuyOperationDTO();
+        dto.setCurrencyFrom("BTC");
+        dto.setCurrencyTo("USD");
+        dto.setAmount(65.32);
+        dto.setPrice(32.3);
+        dto.setValidatePrice(Boolean.FALSE);
+        mockMvc.perform(post("/wallets/{id}/buy", id)
+                .content(asJsonString(dto))
+                .contentType(MediaType.APPLICATION_JSON)
+                .accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().isServiceUnavailable());
+    }
+
+    /**
      * Test transfer.
      *
      * @throws Exception the exception
@@ -419,6 +449,37 @@ class WalletControllerTest {
                 .contentType(MediaType.APPLICATION_JSON)
                 .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isNotFound());
+    }
+
+    /**
+     * Test transfer service unavailable.
+     *
+     * @throws Exception the exception
+     */
+    @Test
+    void testTransferServiceUnavailable() throws Exception {
+        final long id = 1L;
+        doThrow(ExternalServiceException.class).when(this.operationService).transfer(
+                anyLong(),
+                anyLong(),
+                anyString(),
+                anyString(),
+                anyDouble(),
+                anyDouble(),
+                anyBoolean()
+        );
+        TransferOperationDTO dto = new TransferOperationDTO();
+        dto.setWalletId(id);
+        dto.setCurrencyFrom("BTC");
+        dto.setCurrencyTo("USD");
+        dto.setAmount(65.32);
+        dto.setPrice(32.3);
+        dto.setValidatePrice(Boolean.FALSE);
+        mockMvc.perform(post("/wallets/{id}/transfer", id)
+                .content(asJsonString(dto))
+                .contentType(MediaType.APPLICATION_JSON)
+                .accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().isServiceUnavailable());
     }
 
     /**
