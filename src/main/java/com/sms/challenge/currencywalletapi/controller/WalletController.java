@@ -5,6 +5,8 @@ import com.sms.challenge.currencywalletapi.entity.CurrencyAmount;
 import com.sms.challenge.currencywalletapi.entity.Wallet;
 import com.sms.challenge.currencywalletapi.service.CryptoCurrencyOperationService;
 import com.sms.challenge.currencywalletapi.service.WalletService;
+import io.swagger.annotations.ApiResponse;
+import io.swagger.annotations.ApiResponses;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -34,6 +36,10 @@ public class WalletController {
      * @return the wallet dto
      */
     @GetMapping("/{id}")
+    @ApiResponses(value = {
+            @ApiResponse(code = 200, message = "Successful retrieval", response = WalletDTO.class),
+            @ApiResponse(code = 404, message = "Resource not found"),
+            @ApiResponse(code = 400, message = "Bad request")})
     public ResponseEntity<WalletDTO> find(@PathVariable("id") Long id) {
         Wallet wallet = service.find(id);
         return new ResponseEntity<>(this.toDTO(wallet), HttpStatus.OK);
@@ -46,6 +52,9 @@ public class WalletController {
      * @return the response entity
      */
     @PostMapping
+    @ApiResponses(value = {
+            @ApiResponse(code = 201, message = "Resource created", response = WalletDTO.class),
+            @ApiResponse(code = 400, message = "Bad request")})
     public ResponseEntity<WalletDTO> create(@RequestBody CreateWalletDTO dto) {
         Wallet wallet = service.create(this.toEntity(dto));
         return new ResponseEntity<>(this.toDTO(wallet), HttpStatus.CREATED);
@@ -59,6 +68,10 @@ public class WalletController {
      * @return the response entity
      */
     @PutMapping("/{id}")
+    @ApiResponses(value = {
+            @ApiResponse(code = 200, message = "Resource updated", response = WalletDTO.class),
+            @ApiResponse(code = 404, message = "Resource not found"),
+            @ApiResponse(code = 400, message = "Bad request")})
     public ResponseEntity<WalletDTO> update(@PathVariable("id") Long id, @RequestBody UpdateWalletDTO dto) {
         Wallet wallet = service.find(id);
         this.mergeEntity(wallet, dto);
@@ -73,6 +86,10 @@ public class WalletController {
      * @return the response entity
      */
     @DeleteMapping("/{id}")
+    @ApiResponses(value = {
+            @ApiResponse(code = 204, message = "Resource deleted"),
+            @ApiResponse(code = 404, message = "Resource not found"),
+            @ApiResponse(code = 400, message = "Bad request")})
     public ResponseEntity<HttpStatus> delete(@PathVariable("id") Long id) {
         service.delete(id);
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
@@ -86,6 +103,11 @@ public class WalletController {
      * @return the response entity
      */
     @PostMapping("/{id}/buy")
+    @ApiResponses(value = {
+            @ApiResponse(code = 202, message = "Resource accepted", response = WalletDTO.class),
+            @ApiResponse(code = 404, message = "Resource not found"),
+            @ApiResponse(code = 400, message = "Bad request"),
+            @ApiResponse(code = 503, message = "External service unavailable")})
     public ResponseEntity<WalletDTO> buy(@PathVariable("id") Long id, @RequestBody BuyOperationDTO dto) {
         this.operationService.buy(
                 id,
@@ -107,6 +129,11 @@ public class WalletController {
      * @return the response entity
      */
     @PostMapping("/{id}/transfer")
+    @ApiResponses(value = {
+            @ApiResponse(code = 202, message = "Resource accepted"),
+            @ApiResponse(code = 404, message = "Resource not found"),
+            @ApiResponse(code = 400, message = "Bad request"),
+            @ApiResponse(code = 503, message = "External service unavailable")})
     public ResponseEntity<HttpStatus> transfer(@PathVariable("id") Long id, @RequestBody TransferOperationDTO dto) {
         this.operationService.transfer(
                 id,
