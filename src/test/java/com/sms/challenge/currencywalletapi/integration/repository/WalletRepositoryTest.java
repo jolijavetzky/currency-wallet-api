@@ -26,7 +26,7 @@ class WalletRepositoryTest {
      * Test find by id.
      */
     @Test
-    public void testFindById() {
+    void testFindById() {
         Wallet wallet = new Wallet("MyWallet", new HashSet<>());
         repository.save(wallet);
         assertNotNull(wallet.getId());
@@ -37,7 +37,7 @@ class WalletRepositoryTest {
      * Test save.
      */
     @Test
-    public void testSave() {
+    void testSave() {
         Set<CurrencyAmount> currencyAmounts = new HashSet<>();
         currencyAmounts.add(new CurrencyAmount("BTC1", 98.69));
         currencyAmounts.add(new CurrencyAmount("BTC2", 98.79));
@@ -52,7 +52,7 @@ class WalletRepositoryTest {
      * Test validate save.
      */
     @Test
-    public void testValidateSave() {
+    void testValidateSave() {
         Exception exception = assertThrows(DataIntegrityViolationException.class, () -> repository.save(new Wallet()));
         assertTrue(exception.getMessage().contains("not-null property references a null or transient value"));
 
@@ -76,7 +76,7 @@ class WalletRepositoryTest {
      * Test update.
      */
     @Test
-    public void testUpdate() {
+    void testUpdate() {
         Wallet wallet = new Wallet("MyWallet", new HashSet<>());
         repository.save(wallet);
         assertNotNull(wallet.getId());
@@ -93,8 +93,10 @@ class WalletRepositoryTest {
      * Test delete.
      */
     @Test
-    public void testDelete() {
-        Wallet wallet = new Wallet("MyWallet", new HashSet<>());
+    void testDelete() {
+        Set<CurrencyAmount> currencyAmounts = new HashSet<>();
+        currencyAmounts.add(new CurrencyAmount("BTC", 98.69));
+        Wallet wallet = new Wallet("MyWallet", currencyAmounts);
         repository.save(wallet);
         assertNotNull(wallet.getId());
         repository.delete(wallet);

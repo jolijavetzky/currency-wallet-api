@@ -28,7 +28,7 @@ import static org.mockito.Mockito.when;
  * The type Crypto currency operation service test.
  */
 @SpringBootTest
-public class CryptoCurrencyOperationServiceTest {
+class CryptoCurrencyOperationServiceTest {
 
     private static final String CURRENCY_SYMBOL_FROM = "BTC";
     private static final String CURRENCY_SYMBOL_TO = "USD";

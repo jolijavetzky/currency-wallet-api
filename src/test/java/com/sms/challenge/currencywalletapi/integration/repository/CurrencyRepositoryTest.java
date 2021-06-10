@@ -1,5 +1,6 @@
 package com.sms.challenge.currencywalletapi.integration.repository;
 
+import com.sms.challenge.currencywalletapi.entity.Currency;
 import com.sms.challenge.currencywalletapi.repository.CurrencyRepository;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -11,7 +12,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
  * The type Currency repository test.
  */
 @DataJpaTest
-public class CurrencyRepositoryTest {
+class CurrencyRepositoryTest {
 
     @Autowired
     private CurrencyRepository repository;
@@ -20,8 +21,8 @@ public class CurrencyRepositoryTest {
      * Test find by crypto true.
      */
     @Test
-    public void testFindByCryptoTrue() {
-        long size = repository.findAll().stream().filter(item -> item.getCrypto()).count();
+    void testFindByCryptoTrue() {
+        long size = repository.findAll().stream().filter(Currency::getCrypto).count();
         assertEquals(size, repository.findByCryptoTrue().size());
 
     }
@@ -30,7 +31,7 @@ public class CurrencyRepositoryTest {
      * Test find by crypto false.
      */
     @Test
-    public void testFindByCryptoFalse() {
+    void testFindByCryptoFalse() {
         long size = repository.findAll().stream().filter(item -> !item.getCrypto()).count();
         assertEquals(size, repository.findByCryptoFalse().size());
     }

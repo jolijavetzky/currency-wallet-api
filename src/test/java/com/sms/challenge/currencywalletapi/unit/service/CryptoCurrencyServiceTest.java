@@ -26,7 +26,7 @@ import static org.mockito.Mockito.when;
  * The type Crypto currency service test.
  */
 @SpringBootTest
-public class CryptoCurrencyServiceTest {
+class CryptoCurrencyServiceTest {
 
     private static final String CRYPTO_CURRENCY_SYMBOL = "BTC";
     private static final String NOT_CRYPTO_CURRENCY_SYMBOL_1 = "USD";
@@ -67,7 +67,7 @@ public class CryptoCurrencyServiceTest {
         prices.put(NOT_CRYPTO_CURRENCY_SYMBOL_1, NOT_CRYPTO_CURRENCY_PRICE_1);
         prices.put(NOT_CRYPTO_CURRENCY_SYMBOL_2, NOT_CRYPTO_CURRENCY_PRICE_2);
         currencies.put(CRYPTO_CURRENCY_SYMBOL, prices);
-        when(this.fetcherService.fetch(Mockito.anyListOf(String.class), Mockito.anyListOf(String.class))).thenReturn(currencies);
+        when(this.fetcherService.fetch(Mockito.anyList(), Mockito.anyList())).thenReturn(currencies);
         when(this.fetcherService.fetch(Mockito.anyString(), Mockito.anyString())).thenReturn(prices);
     }
 

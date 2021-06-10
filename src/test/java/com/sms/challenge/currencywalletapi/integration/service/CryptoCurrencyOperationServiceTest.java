@@ -24,7 +24,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
  * The type Crypto currency operation service test.
  */
 @SpringBootTest
-public class CryptoCurrencyOperationServiceTest {
+class CryptoCurrencyOperationServiceTest {
 
     private static final Logger LOG = LoggerFactory.getLogger(CryptoCurrencyOperationServiceTest.class);
 
@@ -52,7 +52,7 @@ public class CryptoCurrencyOperationServiceTest {
      * Test buy fixed price.
      */
     @Test
-    public void testBuy_FixedPrice() {
+    void testBuy_FixedPrice() {
         CurrencyAmount ca1 = new CurrencyAmount(CURRENCY_SYMBOL_FROM, CURRENCY_INITIAL_AMOUNT_FROM);
         CurrencyAmount ca2 = new CurrencyAmount(CURRENCY_SYMBOL_TO, CURRENCY_INITIAL_AMOUNT_TO);
         Set<CurrencyAmount> currencyAmounts = Stream.of(ca1, ca2).collect(Collectors.toSet());
@@ -82,7 +82,7 @@ public class CryptoCurrencyOperationServiceTest {
      * Test buy without price.
      */
     @Test
-    public void testBuy_WithoutPrice() {
+    void testBuy_WithoutPrice() {
         CurrencyAmount ca1 = new CurrencyAmount(CURRENCY_SYMBOL_FROM, CURRENCY_INITIAL_AMOUNT_FROM);
         CurrencyAmount ca2 = new CurrencyAmount(CURRENCY_SYMBOL_TO, CURRENCY_INITIAL_AMOUNT_TO);
         Set<CurrencyAmount> currencyAmounts = Stream.of(ca1, ca2).collect(Collectors.toSet());
@@ -111,7 +111,7 @@ public class CryptoCurrencyOperationServiceTest {
      * Test transfer fixed price.
      */
     @Test
-    public void testTransfer_FixedPrice() {
+    void testTransfer_FixedPrice() {
         CurrencyAmount ca1 = new CurrencyAmount(CURRENCY_SYMBOL_FROM, CURRENCY_INITIAL_AMOUNT_FROM);
         CurrencyAmount ca2 = new CurrencyAmount(CURRENCY_SYMBOL_TO, CURRENCY_INITIAL_AMOUNT_TO);
         Set<CurrencyAmount> currencyAmounts1 = Stream.of(ca1, ca2).collect(Collectors.toSet());
@@ -147,7 +147,7 @@ public class CryptoCurrencyOperationServiceTest {
      * Test transfer without price.
      */
     @Test
-    public void testTransfer_WithoutPrice() {
+    void testTransfer_WithoutPrice() {
         CurrencyAmount ca1 = new CurrencyAmount(CURRENCY_SYMBOL_FROM, CURRENCY_INITIAL_AMOUNT_FROM);
         CurrencyAmount ca2 = new CurrencyAmount(CURRENCY_SYMBOL_TO, CURRENCY_INITIAL_AMOUNT_TO);
         Set<CurrencyAmount> currencyAmounts1 = Stream.of(ca1, ca2).collect(Collectors.toSet());
@@ -179,12 +179,10 @@ public class CryptoCurrencyOperationServiceTest {
     }
 
     private void collectFutures(List<Future<String>> futures) {
-        futures.stream().forEach(item -> {
+        futures.forEach(item -> {
             try {
                 item.get();
-            } catch (InterruptedException e) {
-                LOG.error(e.getMessage());
-            } catch (ExecutionException e) {
+            } catch (InterruptedException | ExecutionException e) {
                 LOG.error(e.getMessage());
             }
         });
@@ -202,7 +200,7 @@ public class CryptoCurrencyOperationServiceTest {
          *
          * @param walletId the wallet id
          */
-        public BuyTask(Long walletId) {
+        BuyTask(Long walletId) {
             this.walletId = walletId;
         }
 
@@ -212,13 +210,13 @@ public class CryptoCurrencyOperationServiceTest {
          * @param walletId the wallet id
          * @param price    the price
          */
-        public BuyTask(Long walletId, Double price) {
+        BuyTask(Long walletId, Double price) {
             this.walletId = walletId;
             this.price = price;
         }
 
         @Override
-        public String call() throws Exception {
+        public String call() {
             service.buy(
                     this.walletId,
                     CURRENCY_SYMBOL_FROM,
@@ -244,7 +242,7 @@ public class CryptoCurrencyOperationServiceTest {
          * @param walletIdFrom the wallet id from
          * @param walletIdTo   the wallet id to
          */
-        public TransferTask(Long walletIdFrom, Long walletIdTo) {
+        TransferTask(Long walletIdFrom, Long walletIdTo) {
             this.walletIdFrom = walletIdFrom;
             this.walletIdTo = walletIdTo;
         }
@@ -256,14 +254,14 @@ public class CryptoCurrencyOperationServiceTest {
          * @param walletIdTo   the wallet id to
          * @param price        the price
          */
-        public TransferTask(Long walletIdFrom, Long walletIdTo, Double price) {
+        TransferTask(Long walletIdFrom, Long walletIdTo, Double price) {
             this.walletIdFrom = walletIdFrom;
             this.walletIdTo = walletIdTo;
             this.price = price;
         }
 
         @Override
-        public String call() throws Exception {
+        public String call() {
             service.transfer(
                     this.walletIdFrom,
                     this.walletIdTo,

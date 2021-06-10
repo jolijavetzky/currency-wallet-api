@@ -1,11 +1,9 @@
 package com.sms.challenge.currencywalletapi.controller;
 
-import com.sms.challenge.currencywalletapi.domain.CreateWalletDTO;
-import com.sms.challenge.currencywalletapi.domain.CurrencyAmountDTO;
-import com.sms.challenge.currencywalletapi.domain.UpdateWalletDTO;
-import com.sms.challenge.currencywalletapi.domain.WalletDTO;
+import com.sms.challenge.currencywalletapi.domain.*;
 import com.sms.challenge.currencywalletapi.entity.CurrencyAmount;
 import com.sms.challenge.currencywalletapi.entity.Wallet;
+import com.sms.challenge.currencywalletapi.service.CryptoCurrencyOperationService;
 import com.sms.challenge.currencywalletapi.service.WalletService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -25,6 +23,9 @@ public class WalletController {
 
     @Autowired
     private WalletService service;
+
+    @Autowired
+    private CryptoCurrencyOperationService operationService;
 
     /**
      * Find wallet dto.
@@ -77,13 +78,61 @@ public class WalletController {
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 
+    /**
+     * Buy response entity.
+     *
+     * @param id  the id
+     * @param dto the dto
+     * @return the response entity
+     */
+    @PostMapping("/{id}/buy")
+    public ResponseEntity<WalletDTO> buy(@PathVariable("id") Long id, @RequestBody BuyOperationDTO dto) {
+        this.operationService.buy(
+                id,
+                dto.getCurrencyFrom(),
+                dto.getCurrencyTo(),
+                dto.getAmount(),
+                dto.getPrice(),
+                dto.getValidatePrice()
+        );
+        Wallet wallet = this.service.find(id);
+        return new ResponseEntity<>(this.toDTO(wallet), HttpStatus.ACCEPTED);
+    }
+
+    /**
+     * Buy response entity.
+     *
+     * @param id  the id
+     * @param dto the dto
+     * @return the response entity
+     */
+    @PostMapping("/{id}/transfer")
+    public ResponseEntity<HttpStatus> transfer(@PathVariable("id") Long id, @RequestBody TransferOperationDTO dto) {
+        this.operationService.transfer(
+                id,
+                dto.getWalletId(),
+                dto.getCurrencyFrom(),
+                dto.getCurrencyTo(),
+                dto.getAmount(),
+                dto.getPrice(),
+                dto.getValidatePrice()
+        );
+        return new ResponseEntity<>(HttpStatus.ACCEPTED);
+    }
+
     private WalletDTO toDTO(Wallet wallet) {
-        List<CurrencyAmountDTO> currencyAmounts = wallet.getCurrencyAmounts().stream().map(item -> new CurrencyAmountDTO(item.getCurrency(), item.getAmount())).collect(Collectors.toList());
+        List<CurrencyAmountDTO> currencyAmounts = wallet.getCurrencyAmounts().stream().map(item -> new CurrencyAmountDTO(
+                item.getCurrency(),
+                item.getAmount()
+        )).collect(Collectors.toList());
         return WalletDTO.builder().id(wallet.getId()).name(wallet.getName()).currencyAmounts(currencyAmounts).build();
     }
 
     private Wallet toEntity(CreateWalletDTO dto) {
-        Set<CurrencyAmount> currencyAmounts = dto.getCurrencyAmounts().stream().map(item -> new CurrencyAmount(item.getCurrency(), item.getAmount())).collect(Collectors.toSet());
+        Set<CurrencyAmount> currencyAmounts = dto.getCurrencyAmounts().stream().map(item -> new CurrencyAmount(
+                item.getCurrency(),
+                item.getAmount()
+        )).collect(Collectors.toSet());
         return Wallet.builder().name(dto.getName()).currencyAmounts(currencyAmounts).build();
     }
 

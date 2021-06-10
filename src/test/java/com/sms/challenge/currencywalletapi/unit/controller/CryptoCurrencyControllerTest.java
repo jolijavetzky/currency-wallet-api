@@ -27,7 +27,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
  * The type Crypto currency controller test.
  */
 @WebMvcTest(CryptoCurrencyController.class)
-public class CryptoCurrencyControllerTest {
+class CryptoCurrencyControllerTest {
 
     private static final String CRYPTO_CURRENCY_SYMBOL = "BTC";
     private static final String NOT_CRYPTO_CURRENCY_SYMBOL_1 = "USD";
@@ -59,7 +59,7 @@ public class CryptoCurrencyControllerTest {
      * @throws Exception the exception
      */
     @Test
-    public void testFindAll() throws Exception {
+    void testFindAll() throws Exception {
         List<CryptoCurrencyPrice> prices = Stream.of(
                 new CryptoCurrencyPrice(NOT_CRYPTO_CURRENCY_SYMBOL_1, NOT_CRYPTO_CURRENCY_PRICE_1),
                 new CryptoCurrencyPrice(NOT_CRYPTO_CURRENCY_SYMBOL_2, NOT_CRYPTO_CURRENCY_PRICE_2)

@@ -18,7 +18,7 @@ import static org.junit.jupiter.api.Assertions.*;
  * The type Currency service test.
  */
 @SpringBootTest
-public class CurrencyServiceTest {
+class CurrencyServiceTest {
 
     private static final String CURRENCY_SYMBOL_NON_EXISTENT = "non-existent";
 
@@ -69,7 +69,7 @@ public class CurrencyServiceTest {
      */
     @Test
     void testFindAllByCrypto() {
-        long size = service.findAll().stream().filter(item -> item.getCrypto()).count();
+        long size = service.findAll().stream().filter(Currency::getCrypto).count();
         assertEquals(size, service.findAllByCrypto().size());
     }
 
