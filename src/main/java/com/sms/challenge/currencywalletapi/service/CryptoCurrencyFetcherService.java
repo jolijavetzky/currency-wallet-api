@@ -36,11 +36,11 @@ public class CryptoCurrencyFetcherService {
      * @param currenciesTo   the currencies to
      * @return the map
      */
-    public Map<String, Map<String, Double>> fetch(List<String> currenciesFrom, List<String> currenciesTo) {
+    public Map<String, Map<String, Number>> fetch(List<String> currenciesFrom, List<String> currenciesTo) {
         String from = currenciesFrom.stream().collect(Collectors.joining(","));
         String to = currenciesTo.stream().collect(Collectors.joining(","));
 
-        Map<String, Map<String, Double>> data = webClient.get()
+        Map<String, Map<String, Number>> data = webClient.get()
                 .uri(String.join(
                         "",
                         appConfig.getCryptoCompareApiBaseUrl(),
@@ -75,8 +75,8 @@ public class CryptoCurrencyFetcherService {
      * @param currencyTo   the currency to
      * @return the map
      */
-    public Map<String, Double> fetch(String currencyFrom, String currencyTo) {
-        Map<String, Double> data = webClient.get()
+    public Map<String, Number> fetch(String currencyFrom, String currencyTo) {
+        Map<String, Number> data = webClient.get()
                 .uri(String.join(
                         "",
                         appConfig.getCryptoCompareApiBaseUrl(),

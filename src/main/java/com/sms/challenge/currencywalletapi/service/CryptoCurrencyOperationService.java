@@ -173,14 +173,14 @@ public class CryptoCurrencyOperationService {
                 throw new ValidationException("Price must be greater than zero");
             }
             if (validatePrice != null && validatePrice.equals(Boolean.TRUE)) {
-                Double diff = price / cryptoCurrencyService.convert(currencyFrom, currencyTo);
+                Double diff = price / cryptoCurrencyService.convert(currencyFrom, currencyTo).doubleValue();
                 if (diff >= 1 + this.appConfig.getPriceTolerance() || diff <= 1 - this.appConfig.getPriceTolerance()) {
                     throw new ValidationException("The price is different from the official");
                 }
             }
             value = price;
         } else {
-            value = cryptoCurrencyService.convert(currencyFrom, currencyTo);
+            value = cryptoCurrencyService.convert(currencyFrom, currencyTo).doubleValue();
         }
         return value;
     }

@@ -62,8 +62,8 @@ class CryptoCurrencyServiceTest {
         Currency c3 = new Currency(NOT_CRYPTO_CURRENCY_SYMBOL_2, false);
         when(this.currencyService.findAllByCrypto()).thenReturn(Stream.of(c1).collect(Collectors.toList()));
         when(this.currencyService.findAllByNotCrypto()).thenReturn(Stream.of(c2, c3).collect(Collectors.toList()));
-        Map<String, Map<String, Double>> currencies = new HashMap<>();
-        Map<String, Double> prices = new HashMap<>();
+        Map<String, Map<String, Number>> currencies = new HashMap<>();
+        Map<String, Number> prices = new HashMap<>();
         prices.put(NOT_CRYPTO_CURRENCY_SYMBOL_1, NOT_CRYPTO_CURRENCY_PRICE_1);
         prices.put(NOT_CRYPTO_CURRENCY_SYMBOL_2, NOT_CRYPTO_CURRENCY_PRICE_2);
         currencies.put(CRYPTO_CURRENCY_SYMBOL, prices);
@@ -106,7 +106,7 @@ class CryptoCurrencyServiceTest {
      */
     @Test
     void testConvert() {
-        Double value = this.service.convert(CRYPTO_CURRENCY_SYMBOL, NOT_CRYPTO_CURRENCY_SYMBOL_1);
+        Number value = this.service.convert(CRYPTO_CURRENCY_SYMBOL, NOT_CRYPTO_CURRENCY_SYMBOL_1);
         assertNotNull(value);
         assertEquals(NOT_CRYPTO_CURRENCY_PRICE_1, value);
     }
