@@ -55,6 +55,7 @@ public class CryptoCurrencyController {
     @GetMapping("/{currency}")
     @ApiResponses(value = {
             @ApiResponse(code = 200, message = "Successful retrieval", response = CryptoCurrencyDTO.class),
+            @ApiResponse(code = 404, message = "Resource not found"),
             @ApiResponse(code = 503, message = "External service unavailable")})
     public ResponseEntity<CryptoCurrencyDTO> find(@PathVariable("currency") String currency) {
         CryptoCurrency cryptoCurrency = this.service.find(currency);
