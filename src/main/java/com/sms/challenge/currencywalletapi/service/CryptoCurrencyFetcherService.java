@@ -2,6 +2,7 @@ package com.sms.challenge.currencywalletapi.service;
 
 import com.sms.challenge.currencywalletapi.config.AppConfig;
 import com.sms.challenge.currencywalletapi.exception.ExternalServiceException;
+import com.sms.challenge.currencywalletapi.exception.NotFoundException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -38,6 +39,7 @@ public class CryptoCurrencyFetcherService {
     public Map<String, Map<String, Double>> fetch(List<String> currenciesFrom, List<String> currenciesTo) {
         String from = currenciesFrom.stream().collect(Collectors.joining(","));
         String to = currenciesTo.stream().collect(Collectors.joining(","));
+
         Map<String, Map<String, Double>> data = webClient.get()
                 .uri(String.join("", appConfig.getCryptoCompareApiBaseUrl(), "/pricemulti?fsyms=", from, "&tsyms=", to))
                 .retrieve()
@@ -48,7 +50,11 @@ public class CryptoCurrencyFetcherService {
         if (data.get("Response") != null) {
             String response = String.valueOf(data.get("Response"));
             if (response.equals("Error")) {
-                throw new ExternalServiceException(String.valueOf(data.get("Message")));
+                String message = String.valueOf(data.get("Message"));
+                if (message.contains("market does not exist for this coin pair")) {
+                    throw new NotFoundException("Currency symbol not found");
+                }
+                throw new ExternalServiceException(message);
             }
         }
 
@@ -64,7 +70,14 @@ public class CryptoCurrencyFetcherService {
      */
     public Map<String, Double> fetch(String currencyFrom, String currencyTo) {
         Map<String, Double> data = webClient.get()
-                .uri(String.join("", appConfig.getCryptoCompareApiBaseUrl(), "/price?fsym=", currencyFrom, "&tsyms=", currencyTo))
+                .uri(String.join(
+                        "",
+                        appConfig.getCryptoCompareApiBaseUrl(),
+                        "/price?fsym=",
+                        currencyFrom,
+                        "&tsyms=",
+                        currencyTo
+                ))
                 .retrieve()
                 .bodyToMono(Map.class)
                 .doOnError(error -> LOG.error("An error has occurred {}", error.getMessage()))
@@ -73,7 +86,11 @@ public class CryptoCurrencyFetcherService {
         if (data.get("Response") != null) {
             String response = String.valueOf(data.get("Response"));
             if (response.equals("Error")) {
-                throw new ExternalServiceException(String.valueOf(data.get("Message")));
+                String message = String.valueOf(data.get("Message"));
+                if (message.contains("market does not exist for this coin pair")) {
+                    throw new NotFoundException("Currency symbol not found");
+                }
+                throw new ExternalServiceException(message);
             }
         }
 

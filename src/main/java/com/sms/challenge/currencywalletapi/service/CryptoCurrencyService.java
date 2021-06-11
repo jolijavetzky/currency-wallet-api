@@ -3,11 +3,11 @@ package com.sms.challenge.currencywalletapi.service;
 import com.sms.challenge.currencywalletapi.entity.CryptoCurrency;
 import com.sms.challenge.currencywalletapi.entity.CryptoCurrencyPrice;
 import com.sms.challenge.currencywalletapi.entity.Currency;
-import com.sms.challenge.currencywalletapi.exception.NotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -67,16 +67,16 @@ public class CryptoCurrencyService {
                 Stream.of(currency).collect(Collectors.toList()),
                 currenciesTo
         );
-        if (data.isEmpty()) {
-            throw new NotFoundException("Currency symbol not found");
-        }
         CryptoCurrency cryptoCurrency = new CryptoCurrency(currency);
         cryptoCurrency.setPrices(new ArrayList<>());
-        if (data.get(currency) != null) {
-            currenciesTo.stream().forEach(itemTo -> cryptoCurrency.getPrices().add(new CryptoCurrencyPrice(
-                    itemTo,
-                    data.get(currency).get(itemTo)
-            )));
+        Map<String, Double> currencyData = data.get(currency);
+        if (currencyData != null) {
+            currenciesTo.forEach(itemTo ->
+                    cryptoCurrency.getPrices().add(new CryptoCurrencyPrice(
+                            itemTo,
+                            currencyData.get(itemTo)
+                    ))
+            );
         }
         return cryptoCurrency;
     }
@@ -91,9 +91,6 @@ public class CryptoCurrencyService {
     @Cacheable("conversion")
     public Double convert(String currencyFrom, String currencyTo) {
         Map<String, Double> data = this.fetcherService.fetch(currencyFrom, currencyTo);
-        if (data.isEmpty()) {
-            throw new NotFoundException("Currency symbol not found");
-        }
         return data.get(currencyTo);
     }
 }

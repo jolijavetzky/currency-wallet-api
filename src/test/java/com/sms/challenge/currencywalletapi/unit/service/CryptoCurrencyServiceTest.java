@@ -95,7 +95,8 @@ class CryptoCurrencyServiceTest {
      */
     @Test
     void testValidateFind() {
-        when(this.fetcherService.fetch(Mockito.anyList(), Mockito.anyList())).thenReturn(new HashMap<>());
+        when(this.fetcherService.fetch(Mockito.anyList(), Mockito.anyList())).thenThrow(new NotFoundException(
+                "Currency symbol not found"));
         Exception exception = assertThrows(NotFoundException.class, () -> this.service.find(CRYPTO_CURRENCY_SYMBOL));
         assertTrue(exception.getMessage().contains("Currency symbol not found"));
     }
@@ -115,7 +116,8 @@ class CryptoCurrencyServiceTest {
      */
     @Test
     void testValidateConvert() {
-        when(this.fetcherService.fetch(Mockito.anyString(), Mockito.anyString())).thenReturn(new HashMap<>());
+        when(this.fetcherService.fetch(Mockito.anyString(), Mockito.anyString())).thenThrow(new NotFoundException(
+                "Currency symbol not found"));
         Exception exception = assertThrows(NotFoundException.class, () -> this.service.convert("BTC", "USD"));
         assertTrue(exception.getMessage().contains("Currency symbol not found"));
     }
