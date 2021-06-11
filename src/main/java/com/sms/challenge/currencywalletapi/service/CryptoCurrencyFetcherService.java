@@ -41,7 +41,14 @@ public class CryptoCurrencyFetcherService {
         String to = currenciesTo.stream().collect(Collectors.joining(","));
 
         Map<String, Map<String, Double>> data = webClient.get()
-                .uri(String.join("", appConfig.getCryptoCompareApiBaseUrl(), "/pricemulti?fsyms=", from, "&tsyms=", to))
+                .uri(String.join(
+                        "",
+                        appConfig.getCryptoCompareApiBaseUrl(),
+                        "/pricemulti?fsyms=",
+                        from,
+                        "&tsyms=",
+                        to
+                ))
                 .retrieve()
                 .bodyToMono(Map.class)
                 .doOnError(error -> LOG.error("An error has occurred {}", error.getMessage()))

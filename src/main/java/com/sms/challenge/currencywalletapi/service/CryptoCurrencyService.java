@@ -64,12 +64,12 @@ public class CryptoCurrencyService {
         List<String> currenciesTo = this.currencyService.findAllByNotCrypto().stream().map(Currency::getSymbol).collect(
                 Collectors.toList());
         Map<String, Map<String, Double>> data = this.fetcherService.fetch(
-                Stream.of(currency).collect(Collectors.toList()),
+                Stream.of(currency.toUpperCase()).collect(Collectors.toList()),
                 currenciesTo
         );
-        CryptoCurrency cryptoCurrency = new CryptoCurrency(currency);
+        CryptoCurrency cryptoCurrency = new CryptoCurrency(currency.toUpperCase());
         cryptoCurrency.setPrices(new ArrayList<>());
-        Map<String, Double> currencyData = data.get(currency);
+        Map<String, Double> currencyData = data.get(currency.toUpperCase());
         if (currencyData != null) {
             currenciesTo.forEach(itemTo ->
                     cryptoCurrency.getPrices().add(new CryptoCurrencyPrice(
@@ -91,6 +91,6 @@ public class CryptoCurrencyService {
     @Cacheable("conversion")
     public Double convert(String currencyFrom, String currencyTo) {
         Map<String, Double> data = this.fetcherService.fetch(currencyFrom, currencyTo);
-        return data.get(currencyTo);
+        return data.get(currencyTo.toUpperCase());
     }
 }
