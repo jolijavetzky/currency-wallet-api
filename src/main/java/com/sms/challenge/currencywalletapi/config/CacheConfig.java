@@ -30,6 +30,9 @@ public class CacheConfig {
         MapConfig mapConfigCurrency = new MapConfig("currency");
         mapConfigCurrency.setTimeToLiveSeconds(10);
         config.addMapConfig(mapConfigCurrency);
+        MapConfig mapConfigConversion = new MapConfig("conversion");
+        mapConfigConversion.setTimeToLiveSeconds(10);
+        config.addMapConfig(mapConfigConversion);
 
         // By default, Hazelcast uses multicast for discovering other members that can form a cluster.
         // If multicast isn't a preferred way of discovery for our environment, then we can configure Hazelcast for a full TCP/IP cluster.

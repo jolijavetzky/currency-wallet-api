@@ -3,10 +3,12 @@ package com.sms.challenge.currencywalletapi.unit.controller;
 import com.sms.challenge.currencywalletapi.controller.CryptoCurrencyController;
 import com.sms.challenge.currencywalletapi.entity.CryptoCurrency;
 import com.sms.challenge.currencywalletapi.entity.CryptoCurrencyPrice;
+import com.sms.challenge.currencywalletapi.exception.NotFoundException;
 import com.sms.challenge.currencywalletapi.service.CryptoCurrencyFetcherService;
 import com.sms.challenge.currencywalletapi.service.CryptoCurrencyService;
 import com.sms.challenge.currencywalletapi.service.CurrencyService;
 import org.junit.jupiter.api.Test;
+import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
@@ -41,9 +43,15 @@ class CryptoCurrencyControllerTest {
     @MockBean
     CryptoCurrencyService service;
 
+    /**
+     * The Fetcher service.
+     */
     @MockBean
     CryptoCurrencyFetcherService fetcherService;
 
+    /**
+     * The Currency service.
+     */
     @MockBean
     CurrencyService currencyService;
 
@@ -76,5 +84,40 @@ class CryptoCurrencyControllerTest {
                 .andExpect(jsonPath("$[*].currency").isNotEmpty())
                 .andExpect(jsonPath("$[*].prices").isNotEmpty());
 
+    }
+
+    /**
+     * Test find.
+     *
+     * @throws Exception the exception
+     */
+    @Test
+    void testFind() throws Exception {
+        List<CryptoCurrencyPrice> prices = Stream.of(
+                new CryptoCurrencyPrice(NOT_CRYPTO_CURRENCY_SYMBOL_1, NOT_CRYPTO_CURRENCY_PRICE_1),
+                new CryptoCurrencyPrice(NOT_CRYPTO_CURRENCY_SYMBOL_2, NOT_CRYPTO_CURRENCY_PRICE_2)
+        ).collect(Collectors.toList());
+        CryptoCurrency cryptoCurrency = new CryptoCurrency(CRYPTO_CURRENCY_SYMBOL, prices);
+        when(this.service.find(Mockito.anyString())).thenReturn(cryptoCurrency);
+
+        mockMvc.perform(get("/crypto-currencies/{currency}", "BTC")
+                .accept(MediaType.APPLICATION_JSON))
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$").exists())
+                .andExpect(jsonPath("$.currency").isNotEmpty())
+                .andExpect(jsonPath("$.prices").isNotEmpty());
+
+    }
+
+    /**
+     * Test find not found.
+     *
+     * @throws Exception the exception
+     */
+    @Test
+    void testFindNotFound() throws Exception {
+        when(this.service.find(Mockito.anyString())).thenThrow(NotFoundException.class);
+        mockMvc.perform(get("/crypto-currencies/{currency}", "BTC")).andExpect(status().isNotFound());
     }
 }

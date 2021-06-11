@@ -46,7 +46,7 @@ public class CryptoCurrencyDTO {
          * @param currency the currency
          * @return the crypto currency dto . builder
          */
-        public CryptoCurrencyDTO.Builder name(String currency) {
+        public CryptoCurrencyDTO.Builder currency(String currency) {
             this.currency = currency;
             return this;
         }

@@ -1,8 +1,8 @@
 package com.sms.challenge.currencywalletapi.unit.service;
 
-import com.sms.challenge.currencywalletapi.exception.NotFoundException;
 import com.sms.challenge.currencywalletapi.entity.CryptoCurrency;
 import com.sms.challenge.currencywalletapi.entity.Currency;
+import com.sms.challenge.currencywalletapi.exception.NotFoundException;
 import com.sms.challenge.currencywalletapi.service.CryptoCurrencyFetcherService;
 import com.sms.challenge.currencywalletapi.service.CryptoCurrencyService;
 import com.sms.challenge.currencywalletapi.service.CurrencyService;
@@ -79,6 +79,25 @@ class CryptoCurrencyServiceTest {
         List<CryptoCurrency> cryptoCurrencies = this.service.findAll();
         assertNotNull(cryptoCurrencies);
         assertFalse(cryptoCurrencies.isEmpty());
+    }
+
+    /**
+     * Test find.
+     */
+    @Test
+    void testFind() {
+        CryptoCurrency cryptoCurrency = this.service.find(CRYPTO_CURRENCY_SYMBOL);
+        assertNotNull(cryptoCurrency);
+    }
+
+    /**
+     * Test validate find.
+     */
+    @Test
+    void testValidateFind() {
+        when(this.fetcherService.fetch(Mockito.anyList(), Mockito.anyList())).thenReturn(new HashMap<>());
+        Exception exception = assertThrows(NotFoundException.class, () -> this.service.find(CRYPTO_CURRENCY_SYMBOL));
+        assertTrue(exception.getMessage().contains("Currency symbol not found"));
     }
 
     /**
